@@ -1,13 +1,17 @@
 "use client";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
+// Valores públicos del proyecto (seguros para el navegador; la seguridad la dan las reglas RLS).
+const PUBLIC_SUPABASE_URL = "https://atgmxwccddbkkulfqyaf.supabase.co";
+const PUBLIC_SUPABASE_KEY = "sb_publishable_q1qDacd_7WCzRI9WjiWWFQ_PqGC38wc";
+
 let client: SupabaseClient | null = null;
 
 export function supabase(): SupabaseClient {
   if (!client) {
     client = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL || PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || PUBLIC_SUPABASE_KEY,
       { auth: { persistSession: true, detectSessionInUrl: true, flowType: "implicit" } }
     );
   }
@@ -39,7 +43,7 @@ export const FALLBACK_DESIGNS: Design[] = [
   { slug: "promo", name: "Promo 2027", category: "Colegios", ink_note: "2 tintas", is_sample: true },
 ];
 
-export const WHATSAPP = (process.env.NEXT_PUBLIC_WHATSAPP || "").replace(/\D/g, "");
+export const WHATSAPP = (process.env.NEXT_PUBLIC_WHATSAPP || "50376377821").replace(/\D/g, "");
 
 export function whatsappLink(text: string) {
   const base = WHATSAPP ? `https://wa.me/${WHATSAPP}` : "https://wa.me/";
