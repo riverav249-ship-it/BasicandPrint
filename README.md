@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Basic&Print
 
-## Getting Started
+Sitio de serigrafía en camisetas: el cliente gira la prensa para elegir el color, pasa las pantallas para elegir el diseño y envía el pedido por WhatsApp.
 
-First, run the development server:
+## Páginas
+- `/` Prensa: carrusel de colores (3D) + carrusel de diseños + talla y cantidad → hoja de orden → pedido guardado y WhatsApp.
+- `/historia` Nosotros.
+- `/comunidad` Muro de ideas (crear, editar, votar, comentar) y chat en vivo. Acceso con enlace al correo.
+- `/promociones` Promociones y retos de racha con hoja de registro diaria.
+- `/contacto` Formulario (se guarda en la base) y botón de WhatsApp.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Tres estilos seleccionables arriba a la derecha: Formal, Informal y Teens.
+
+## Tecnología
+Next.js 16 · Supabase (base de datos, cuentas, tiempo real) · Vercel.
+
+## Variables de entorno
+Copia `.env.example` a `.env.local` y completa:
+- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_WHATSAPP` número con código de país, sin signos (ej. 50370001234)
+
+## Base de datos
+El esquema completo está en `supabase/migrations/0001_init.sql`.
+Pedidos: tabla `orders`. Mensajes de contacto: `contact_messages`. Colores, diseños, promociones y retos se editan desde el panel de Supabase (Table Editor).
+
+## Desarrollo
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+npm install
+npm run dev
+```
