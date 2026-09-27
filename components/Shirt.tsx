@@ -30,7 +30,7 @@ export function ShirtDefs() {
           <feColorMatrix
             in="n"
             type="matrix"
-            values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.55 -0.12"
+            values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.34 -0.08"
           />
         </filter>
         {/* Tinta sobre tela: leve desplazamiento por la trama */}
