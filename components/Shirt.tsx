@@ -1,64 +1,197 @@
 "use client";
-import { useId } from "react";
 import { DesignArt, inksFor, luminance } from "@/lib/designs";
 
+/* Silueta de camiseta de cuello redondo, con dobladillo curvo */
 const BODY =
-  "M104 22 C 118 36, 182 36, 196 22 L 252 44 C 262 48, 268 56, 272 66 L 298 132 L 250 152 L 236 120 L 236 318 C 236 326, 230 332, 222 332 L 78 332 C 70 332, 64 326, 64 318 L 64 120 L 50 152 L 2 132 L 28 66 C 32 56, 38 48, 48 44 Z";
+  "M106 20 C 120 34, 180 34, 194 20 L 248 40 C 258 44, 266 52, 271 62 L 297 128 C 298 131, 297 134, 294 135 L 254 150 C 251 151, 248 150, 247 147 L 238 124 C 237 190, 238 256, 240 318 C 240 324, 236 328, 230 329 C 178 334, 122 334, 70 329 C 64 328, 60 324, 60 318 C 62 256, 63 190, 62 124 L 53 147 C 52 150, 49 151, 46 150 L 6 135 C 3 134, 2 131, 3 128 L 29 62 C 34 52, 42 44, 52 40 Z";
+
+const NECK = "M106 20 C 120 34, 180 34, 194 20";
+const NECK_BACK = "M106 20 C 122 27, 178 27, 194 20";
+
+const BODY_BACK = BODY.replace("M106 20 C 120 34, 180 34, 194 20", "M106 20 C 122 27, 178 27, 194 20");
+
+/* Filtros y texturas compartidos por todas las camisetas de la página */
+export function ShirtDefs() {
+  return (
+    <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true" focusable="false">
+      <defs>
+        <filter id="bp-soft" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="7" />
+        </filter>
+        <filter id="bp-soft-s" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="2.6" />
+        </filter>
+        <filter id="bp-soft-xl" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="18" />
+        </filter>
+        {/* Tejido de punto: ruido fino en gris */}
+        <filter id="bp-knit" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="1.3 0.9" numOctaves="2" seed="7" result="n" />
+          <feColorMatrix
+            in="n"
+            type="matrix"
+            values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.55 -0.12"
+          />
+        </filter>
+        {/* Tinta sobre tela: leve desplazamiento por la trama */}
+        <filter id="bp-print" x="-5%" y="-5%" width="110%" height="110%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="3" result="t" />
+          <feDisplacementMap in="SourceGraphic" in2="t" scale="1.8" xChannelSelector="R" yChannelSelector="G" result="d" />
+          <feComponentTransfer in="d">
+            <feFuncA type="linear" slope="0.94" />
+          </feComponentTransfer>
+        </filter>
+      </defs>
+    </svg>
+  );
+}
+
+export type Placement = "frente" | "pecho" | "espalda";
+
+const BOX: Record<Placement, { x: number; y: number; s: number }> = {
+  frente: { x: 90, y: 72, s: 120 },
+  pecho: { x: 172, y: 70, s: 46 },
+  espalda: { x: 80, y: 56, s: 140 },
+};
 
 type Props = {
   color: string;
   design?: string | null;
+  designImage?: string | null;
+  logoUrl?: string | null;
+  placement?: Placement;
   inkKey?: string | number;
   className?: string;
   title?: string;
   animate?: boolean;
 };
 
-/** Camiseta vectorial con el diseño impreso en el pecho. */
-export default function Shirt({ color, design, inkKey, className, title, animate }: Props) {
-  const id = useId().replace(/:/g, "");
-  const dark = luminance(color) < 0.2;
+/** Camiseta con sombreado de pliegues, textura de tejido y la impresión debajo de los pliegues. */
+export default function Shirt({
+  color,
+  design,
+  designImage,
+  logoUrl,
+  placement = "frente",
+  inkKey,
+  className,
+  title,
+  animate,
+}: Props) {
+  const img = logoUrl || designImage;
+  const box = BOX[placement];
+  const back = placement === "espalda";
+  const shape = back ? BODY_BACK : BODY;
+  const clip = `bp-clip-${color.replace("#", "")}${back ? "-b" : ""}`;
+  const lum = luminance(color);
+  const dark = lum < 0.12;
+  const light = lum > 0.6;
   const inks = inksFor(color);
+  // Intensidades: en telas oscuras se notan más los brillos; en claras, las sombras.
+  const sh = light ? 0.34 : dark ? 0.55 : 0.42;
+  const hl = dark ? 0.2 : light ? 0.55 : 0.28;
+  
+
   return (
     <svg viewBox="0 0 300 340" className={className} role="img" aria-label={title}>
       <defs>
-        <linearGradient id={`sh-${id}`} x1="0" x2="1">
-          <stop offset="0" stopColor="#000" stopOpacity={dark ? 0.35 : 0.14} />
-          <stop offset="0.22" stopColor="#000" stopOpacity="0" />
-          <stop offset="0.78" stopColor="#000" stopOpacity="0" />
-          <stop offset="1" stopColor="#000" stopOpacity={dark ? 0.4 : 0.16} />
-        </linearGradient>
-        <linearGradient id={`hl-${id}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#fff" stopOpacity={dark ? 0.12 : 0.28} />
-          <stop offset="0.5" stopColor="#fff" stopOpacity="0" />
-        </linearGradient>
-        <clipPath id={`cl-${id}`}>
-          <path d={BODY} />
+        <clipPath id={clip}>
+          <path d={shape} />
         </clipPath>
       </defs>
-      <path d={BODY} fill={color} />
-      <g clipPath={`url(#cl-${id})`}>
-        <rect width="300" height="340" fill={`url(#sh-${id})`} />
-        <rect width="300" height="340" fill={`url(#hl-${id})`} />
-        <path d="M64 120 C 70 180, 66 260, 72 332" stroke="#000" strokeOpacity={dark ? 0.3 : 0.08} strokeWidth="6" fill="none" />
-        <path d="M236 120 C 230 180, 234 260, 228 332" stroke="#000" strokeOpacity={dark ? 0.3 : 0.08} strokeWidth="6" fill="none" />
-        <path d="M130 250 C 150 270, 170 300, 164 332" stroke="#000" strokeOpacity={dark ? 0.2 : 0.05} strokeWidth="10" fill="none" />
-        {/* costura de mangas */}
-        <path d="M50 152 L 2 132 M250 152 L 298 132" stroke="#000" strokeOpacity="0.18" strokeWidth="2" />
-        <path d="M58 142 L 12 122 M242 142 L 288 122" stroke="#000" strokeOpacity="0.12" strokeWidth="1.2" strokeDasharray="3 3" />
-      </g>
-      {/* cuello */}
-      <path d="M104 22 C 118 36, 182 36, 196 22 C 190 50, 110 50, 104 22 Z" fill="#000" fillOpacity={dark ? 0.4 : 0.16} />
-      <path d="M104 22 C 110 46, 190 46, 196 22" stroke="#000" strokeOpacity={dark ? 0.45 : 0.18} strokeWidth="5" fill="none" />
-      {design && (
-        <g
-          key={`${design}-${inkKey ?? ""}`}
-          className={animate ? "ink-pull" : undefined}
-          transform="translate(86 74) scale(0.64)"
-        >
-          <DesignArt slug={design} inks={inks} />
-        </g>
+
+      {/* interior trasero del cuello (solo vista frontal) */}
+      {!back && (
+        <>
+          <path d="M106 20 C 120 34, 180 34, 194 20 C 186 12, 114 12, 106 20 Z" fill={color} />
+          <path d="M106 20 C 120 34, 180 34, 194 20 C 186 12, 114 12, 106 20 Z" fill="#000" fillOpacity={0.42} />
+          <rect x="141" y="18" width="18" height="7" rx="1" fill="#fff" fillOpacity={0.75} />
+        </>
       )}
+
+      <path d={shape} fill={color} />
+
+      <g clipPath={`url(#${clip})`}>
+        {/* impresión */}
+        {(design || img) && (
+          <g key={`${design}-${img}-${placement}-${inkKey ?? ""}`} className={animate ? "ink-pull" : undefined}>
+            <g filter="url(#bp-print)">
+              {img ? (
+                <image
+                  href={img}
+                  x={box.x}
+                  y={box.y}
+                  width={box.s}
+                  height={box.s}
+                  preserveAspectRatio="xMidYMid meet"
+                />
+              ) : (
+                <g transform={`translate(${box.x} ${box.y}) scale(${box.s / 200})`}>
+                  <DesignArt slug={design!} inks={inks} />
+                </g>
+              )}
+            </g>
+          </g>
+        )}
+
+        {/* sombras (se multiplican con la tela y pasan por encima de la tinta) */}
+        <g style={{ mixBlendMode: "multiply" }} fill="#000">
+          <path d="M60 110 C 50 180, 54 260, 62 330 L 30 330 L 30 110 Z" opacity={sh} filter="url(#bp-soft)" transform="translate(12 0)" />
+          <path d="M240 110 C 250 180, 246 260, 238 330 L 270 330 L 270 110 Z" opacity={sh} filter="url(#bp-soft)" transform="translate(-12 0)" />
+          <path d="M66 126 C 90 140, 104 160, 112 186" stroke="#000" strokeWidth="7" fill="none" opacity={sh * 0.7} filter="url(#bp-soft-s)" />
+          <path d="M234 126 C 210 142, 196 160, 190 184" stroke="#000" strokeWidth="7" fill="none" opacity={sh * 0.7} filter="url(#bp-soft-s)" />
+          <path d="M70 142 C 88 156, 96 172, 100 196" stroke="#000" strokeWidth="4" fill="none" opacity={sh * 0.45} filter="url(#bp-soft-s)" />
+          <path d="M230 142 C 214 156, 206 172, 204 194" stroke="#000" strokeWidth="4" fill="none" opacity={sh * 0.45} filter="url(#bp-soft-s)" />
+          <path d="M118 236 C 124 270, 118 300, 112 332" stroke="#000" strokeWidth="12" fill="none" opacity={sh * 0.55} filter="url(#bp-soft)" />
+          <path d="M186 228 C 178 262, 186 300, 196 332" stroke="#000" strokeWidth="10" fill="none" opacity={sh * 0.45} filter="url(#bp-soft)" />
+          <path d="M150 262 C 154 290, 150 312, 150 334" stroke="#000" strokeWidth="6" fill="none" opacity={sh * 0.3} filter="url(#bp-soft)" />
+          <path d="M60 316 C 120 326, 180 326, 240 316 L 240 334 L 60 334 Z" opacity={sh * 0.8} filter="url(#bp-soft-s)" />
+          <path d="M112 30 C 124 48, 176 48, 188 30 L 188 40 C 170 56, 130 56, 112 40 Z" opacity={sh * 0.6} filter="url(#bp-soft-s)" />
+          <path d="M30 70 C 40 96, 44 116, 48 146" stroke="#000" strokeWidth="10" fill="none" opacity={sh * 0.5} filter="url(#bp-soft)" />
+          <path d="M270 70 C 260 96, 256 116, 252 146" stroke="#000" strokeWidth="10" fill="none" opacity={sh * 0.5} filter="url(#bp-soft)" />
+          <path d="M18 104 C 30 114, 42 126, 50 146" stroke="#000" strokeWidth="3" fill="none" opacity={sh * 0.5} filter="url(#bp-soft-s)" />
+          <path d="M282 104 C 270 114, 258 126, 250 146" stroke="#000" strokeWidth="3" fill="none" opacity={sh * 0.5} filter="url(#bp-soft-s)" />
+        </g>
+
+        {/* brillos */}
+        <g style={{ mixBlendMode: "screen" }} fill="#fff">
+          <ellipse cx="146" cy="116" rx="62" ry="58" opacity={hl * 0.55} filter="url(#bp-soft-xl)" />
+          <path d="M78 136 C 96 150, 108 170, 116 196" stroke="#fff" strokeWidth="5" fill="none" opacity={hl * 0.8} filter="url(#bp-soft-s)" />
+          <path d="M222 138 C 206 152, 196 170, 194 194" stroke="#fff" strokeWidth="5" fill="none" opacity={hl * 0.8} filter="url(#bp-soft-s)" />
+          <path d="M134 240 C 140 272, 134 304, 130 332" stroke="#fff" strokeWidth="8" fill="none" opacity={hl * 0.6} filter="url(#bp-soft)" />
+          <path d="M170 236 C 164 268, 168 300, 176 332" stroke="#fff" strokeWidth="6" fill="none" opacity={hl * 0.45} filter="url(#bp-soft)" />
+          <path d="M40 60 C 60 50, 84 44, 104 30" stroke="#fff" strokeWidth="8" fill="none" opacity={hl * 0.55} filter="url(#bp-soft)" />
+          <path d="M260 60 C 240 50, 216 44, 196 30" stroke="#fff" strokeWidth="8" fill="none" opacity={hl * 0.4} filter="url(#bp-soft)" />
+        </g>
+
+        {/* tejido */}
+        <rect width="300" height="340" filter="url(#bp-knit)" style={{ mixBlendMode: "overlay" }} />
+
+        {/* costuras: mangas, hombros y dobladillo */}
+        <g fill="none" stroke="#000" strokeOpacity={dark ? 0.5 : 0.22} strokeWidth="0.9" strokeDasharray="2.2 2">
+          <path d="M11 121 L 49 136" />
+          <path d="M289 121 L 251 136" />
+          <path d="M64 318 C 120 324, 180 324, 236 318" />
+          <path d="M64 312 C 120 318, 180 318, 236 312" />
+        </g>
+        <g fill="none" stroke="#000" strokeOpacity={dark ? 0.45 : 0.16} strokeWidth="1.2">
+          <path d="M62 124 C 58 96, 52 70, 52 40" />
+          <path d="M238 124 C 242 96, 248 70, 248 40" />
+        </g>
+      </g>
+
+      {/* cuello acanalado */}
+      <path d={back ? NECK_BACK : NECK} stroke={color} strokeWidth="9" fill="none" strokeLinecap="round" />
+      <path
+        d={back ? NECK_BACK : NECK}
+        stroke="#000"
+        strokeOpacity={dark ? 0.35 : 0.14}
+        strokeWidth="9"
+        fill="none"
+        strokeDasharray="1 1.6"
+        strokeLinecap="butt"
+      />
+      <path d={back ? "M103 23 C 120 31, 180 31, 197 23" : "M103 24 C 118 40, 182 40, 197 24"} stroke="#000" strokeOpacity={dark ? 0.5 : 0.18} strokeWidth="1.4" fill="none" />
     </svg>
   );
 }

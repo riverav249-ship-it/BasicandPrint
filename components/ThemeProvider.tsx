@@ -1,11 +1,10 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
-export type Theme = "formal" | "informal" | "teens";
+export type Theme = "formal" | "informal";
 export const THEMES: { id: Theme; label: string; hint: string }[] = [
-  { id: "formal", label: "Formal", hint: "Grafito y azul" },
-  { id: "informal", label: "Informal", hint: "Amarillo de taller" },
-  { id: "teens", label: "Teens", hint: "Fosforescente" },
+  { id: "formal", label: "Formal", hint: "Minimalista" },
+  { id: "informal", label: "Informal", hint: "Celeste y azul" },
 ];
 
 const Ctx = createContext<{ theme: Theme; setTheme: (t: Theme) => void }>({
@@ -17,8 +16,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("informal");
 
   useEffect(() => {
-    const current = document.documentElement.dataset.theme as Theme | undefined;
-    if (current) setThemeState(current);
+    const current = document.documentElement.dataset.theme;
+    if (current === "formal" || current === "informal") setThemeState(current);
+    else document.documentElement.dataset.theme = "informal";
   }, []);
 
   const setTheme = useCallback((t: Theme) => {
@@ -37,4 +37,4 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 export const useTheme = () => useContext(Ctx);
 
-export const themeBootScript = `try{var t=localStorage.getItem('bp-theme');if(t==='formal'||t==='informal'||t==='teens')document.documentElement.dataset.theme=t;}catch(e){}`;
+export const themeBootScript = `try{var t=localStorage.getItem('bp-theme');if(t==='formal'||t==='informal')document.documentElement.dataset.theme=t;}catch(e){}`;

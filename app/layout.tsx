@@ -4,11 +4,13 @@ import "@fontsource/big-shoulders-display/latin-800";
 import "@fontsource/big-shoulders-display/latin-900";
 import "@fontsource/bodoni-moda/latin-700.css";
 import "@fontsource/bodoni-moda/latin-700-italic.css";
-import "@fontsource/bungee/latin-400.css";
 import "./globals.css";
 import { ThemeProvider, themeBootScript } from "@/components/ThemeProvider";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import CartDrawer from "@/components/CartDrawer";
+import { ShirtDefs } from "@/components/Shirt";
+import { CartProvider } from "@/lib/cart";
 
 export const metadata: Metadata = {
   title: { default: "Basic&Print · Serigrafía en camisetas", template: "%s · Basic&Print" },
@@ -30,12 +32,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body>
         <ThemeProvider>
+          <CartProvider>
+          <ShirtDefs />
           <a className="skip" href="#contenido">
             Saltar al contenido
           </a>
           <SiteHeader />
           <main id="contenido">{children}</main>
           <SiteFooter />
+          <CartDrawer />
+          </CartProvider>
         </ThemeProvider>
       </body>
     </html>

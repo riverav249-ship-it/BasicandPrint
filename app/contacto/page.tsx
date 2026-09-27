@@ -2,7 +2,35 @@
 import { useState } from "react";
 import { MessageCircle, Mail, Check, AlertCircle } from "lucide-react";
 import RegMark from "@/components/RegMark";
+import SocialLinks from "@/components/SocialLinks";
 import { supabase, whatsappLink, WHATSAPP } from "@/lib/supabase";
+
+const FAQ = [
+  {
+    q: "¿Puedo pedir colores y tallas diferentes en un mismo pedido?",
+    a: "Sí. En la prensa eliges color y diseño, marcas cuántas quieres de cada talla y las agregas al carrito. Repite con otro color o diseño y envías todo junto.",
+  },
+  {
+    q: "¿Qué archivo necesito para imprimir mi logo?",
+    a: "Sube una imagen PNG, JPG, SVG o WEBP de hasta 5 MB. Para mejor resultado usa PNG con fondo transparente o SVG. Si tu archivo no está listo, escríbenos y lo revisamos contigo.",
+  },
+  {
+    q: "¿Dónde puede ir la impresión?",
+    a: "En el frente, pequeño en el pecho o en la espalda. Si quieres más de un lugar, anótalo en las notas del pedido.",
+  },
+  {
+    q: "¿Cómo sé el precio y cuándo está listo?",
+    a: "Cuando envías el pedido por WhatsApp te respondemos con el precio, la forma de pago y el tiempo de entrega según la cantidad y los colores de tinta.",
+  },
+  {
+    q: "¿Qué talla escojo?",
+    a: "Mide de axila a axila una camiseta que te quede bien y compárala con la tabla que te enviamos por WhatsApp. Si dudas, pregúntanos antes de confirmar.",
+  },
+  {
+    q: "¿Me muestran cómo quedará antes de imprimir?",
+    a: "Sí, confirmamos contigo el diseño, la ubicación y los colores antes de preparar las pantallas.",
+  },
+];
 
 const TOPICS = [
   { v: "pedido", l: "Un pedido" },
@@ -54,6 +82,7 @@ export default function Contacto() {
             </span>
           </a>
           {!WHATSAPP && <p className="dev-note">Falta configurar el número de WhatsApp del negocio.</p>}
+          <SocialLinks />
           <dl className="contact-facts">
             <div>
               <dt>Dónde estamos</dt>
@@ -118,6 +147,19 @@ export default function Contacto() {
           </form>
         )}
       </div>
+      <section className="band" aria-labelledby="faq-t">
+        <h2 id="faq-t" className="band-title">
+          Preguntas frecuentes
+        </h2>
+        <div className="faq">
+          {FAQ.map((f) => (
+            <details key={f.q}>
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

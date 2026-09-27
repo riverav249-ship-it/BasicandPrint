@@ -1,44 +1,42 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Minus, Plus, Send, Check, AlertCircle } from "lucide-react";
-import Shirt from "./Shirt";
-import RegMark from "./RegMark";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, Minus, Plus, Upload, X, Check, AlertCircle, ShoppingBag } from "lucide-react";
+import Shirt, { type Placement } from "./Shirt";
 import { DesignArt, inksFor } from "@/lib/designs";
-import {
-  FALLBACK_COLORS,
-  FALLBACK_DESIGNS,
-  supabase,
-  whatsappLink,
-  WHATSAPP,
-  type Design,
-  type ShirtColor,
-} from "@/lib/supabase";
-import { useTheme } from "./ThemeProvider";
+import { FALLBACK_COLORS, FALLBACK_DESIGNS, supabase, type Design, type ShirtColor } from "@/lib/supabase";
+import { useCart } from "@/lib/cart";
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "Niño"] as const;
+const PLACEMENTS: { id: Placement; label: string }[] = [
+  { id: "frente", label: "Frente" },
+  { id: "pecho", label: "Pecho" },
+  { id: "espalda", label: "Espalda" },
+];
 const mod = (n: number, m: number) => ((n % m) + m) % m;
+const LOGO_TYPES = ["image/png", "image/jpeg", "image/svg+xml", "image/webp"];
+
+type Print = { design: string; designImage?: string | null; logoUrl?: string | null; placement: Placement };
 
 /* ─────────────── Prensa rotativa (colores) ─────────────── */
 function Press({
   colors,
   index,
   onIndex,
-  design,
+  print,
   pull,
 }: {
   colors: ShirtColor[];
   index: number;
   onIndex: (i: number) => void;
-  design: string;
+  print: Print;
   pull: number;
 }) {
   const n = colors.length;
   const step = 360 / n;
-  const [rot, setRot] = useState(0);
-  const [drag, setDrag] = useState<{ x: number; start: number } | null>(null);
+  const [rot, setRot] = useState(index * step);
+  const [drag, setDrag] = useState<{ x: number; start: number; moved: boolean } | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
 
-  // Mantener la rotación alineada cuando el índice cambia desde fuera
   useEffect(() => {
     if (drag) return;
     setRot((r) => {
@@ -53,22 +51,12 @@ function Press({
 
   const go = useCallback(
     (dir: number) => {
-      const next = mod(index + dir, n);
       setRot((r) => Math.round(r / step) * step + dir * step);
-      onIndex(next);
+      onIndex(mod(index + dir, n));
     },
     [index, n, onIndex, step]
   );
 
-  const onPointerDown = (e: React.PointerEvent) => {
-    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-    setDrag({ x: e.clientX, start: rot });
-  };
-  const onPointerMove = (e: React.PointerEvent) => {
-    if (!drag) return;
-    const w = stageRef.current?.clientWidth || 600;
-    setRot(drag.start + ((e.clientX - drag.x) / w) * 160 * -1);
-  };
   const onPointerUp = () => {
     if (!drag) return;
     const snapped = Math.round(rot / step) * step;
@@ -98,11 +86,19 @@ function Press({
             go(-1);
           }
         }}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
+        onPointerDown={(e) => {
+          (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+          setDrag({ x: e.clientX, start: rot, moved: false });
+        }}
+        onPointerMove={(e) => {
+          if (!drag) return;
+          const w = stageRef.current?.clientWidth || 600;
+          const dx = e.clientX - drag.x;
+          if (Math.abs(dx) > 5 && !drag.moved) setDrag({ ...drag, moved: true });
+          setRot(drag.start - (dx / w) * 160);
+        }}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
-        style={{ ["--n" as string]: n }}
       >
         <div className="press-bed" aria-hidden="true">
           <span className="press-hub" />
@@ -110,8 +106,7 @@ function Press({
         <div className="press-ring" style={{ transform: `translateZ(calc(var(--r) * -1)) rotateY(${-rot}deg)` }}>
           {colors.map((c, i) => {
             const angle = i * step;
-            let dist = Math.abs(mod(angle - rot + 180, 360) - 180);
-            dist = Math.min(dist, 180);
+            const dist = Math.min(Math.abs(mod(angle - rot + 180, 360) - 180), 180);
             const isFront = i === index && !drag;
             return (
               <div
@@ -123,21 +118,23 @@ function Press({
                 className={`platen ${isFront ? "is-front" : ""}`}
                 style={{
                   transform: `rotateY(${angle}deg) translateZ(var(--r))`,
-                  opacity: 1 - (dist / 180) * 0.72,
-                  filter: dist > 60 ? `brightness(${1 - dist / 400})` : undefined,
+                  opacity: 1 - (dist / 180) * 0.75,
+                  filter: dist > 60 ? `brightness(${1 - dist / 420})` : undefined,
                 }}
                 onClick={() => {
-                  if (i !== index) {
-                    let diff = i - index;
-                    if (diff > n / 2) diff -= n;
-                    if (diff < -n / 2) diff += n;
-                    go(diff);
-                  }
+                  if (drag?.moved || i === index) return;
+                  let diff = i - index;
+                  if (diff > n / 2) diff -= n;
+                  if (diff < -n / 2) diff += n;
+                  go(diff);
                 }}
               >
                 <Shirt
                   color={c.hex}
-                  design={design}
+                  design={print.design}
+                  designImage={print.designImage}
+                  logoUrl={print.logoUrl}
+                  placement={print.placement}
                   inkKey={isFront ? pull : 0}
                   animate={isFront}
                   className="platen-shirt"
@@ -148,7 +145,6 @@ function Press({
             );
           })}
         </div>
-        {/* jalón de rasero sobre la camiseta del frente */}
         <span key={pull} className="squeegee-pass" aria-hidden="true" />
       </div>
 
@@ -176,10 +172,12 @@ function Screens({
   designs,
   index,
   onIndex,
+  logoPreview,
 }: {
   designs: Design[];
   index: number;
   onIndex: (i: number) => void;
+  logoPreview: string | null;
 }) {
   const n = designs.length;
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -195,14 +193,13 @@ function Screens({
     return () => ro.disconnect();
   }, []);
 
-  const frame = w < 380 ? 118 : 138;
-  const gap = 14;
+  const frame = w < 380 ? 104 : 118;
+  const gap = 12;
   const offset = w / 2 - frame / 2 - index * (frame + gap) + dx;
   const inks = inksFor("#EDEDEA");
-  const active = designs[index];
 
   return (
-    <section className="screens" aria-label="Diseño de serigrafía">
+    <div className="screens">
       <div className="screens-head">
         <h2 className="panel-label">Diseño</h2>
         <div className="screens-nav">
@@ -258,65 +255,81 @@ function Screens({
           className={`screens-track ${dx ? "is-dragging" : ""}`}
           style={{ transform: `translateX(${offset}px)`, gap, ["--frame" as string]: `${frame}px` }}
         >
-          {designs.map((d, i) => (
-            <button
-              key={d.slug}
-              role="option"
-              aria-selected={i === index}
-              className={`screen-frame ${i === index ? "is-active" : ""}`}
-              onClick={() => {
-                if (drag.current?.moved) return;
-                onIndex(i);
-              }}
-            >
-              <span className="mesh">
-                <svg viewBox="0 0 200 200" aria-hidden="true">
-                  <DesignArt slug={d.slug} inks={inks} />
-                </svg>
-              </span>
-              <span className="frame-name">{d.name}</span>
-            </button>
-          ))}
+          {designs.map((d, i) => {
+            const isLogo = d.slug === "tu-logo";
+            const img = isLogo ? logoPreview : d.image_url;
+            return (
+              <button
+                key={d.slug}
+                role="option"
+                aria-selected={i === index}
+                className={`screen-frame ${i === index ? "is-active" : ""}`}
+                onClick={() => {
+                  if (drag.current?.moved) return;
+                  onIndex(i);
+                }}
+              >
+                <span className="mesh">
+                  {img ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={img} alt="" draggable={false} />
+                  ) : (
+                    <svg viewBox="0 0 200 200" aria-hidden="true">
+                      <DesignArt slug={d.slug} inks={inks} />
+                    </svg>
+                  )}
+                </span>
+                <span className="frame-name">{isLogo && logoPreview ? "Mi logo" : d.name}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
-      <p className="screen-meta" aria-live="polite">
-        <strong>{active?.name}</strong>
-        <span>
-          {active?.category} · {active?.ink_note}
-          {active?.is_sample ? " · diseño de ejemplo" : ""}
-        </span>
-      </p>
-    </section>
+    </div>
   );
 }
 
 /* ─────────────── Armador completo ─────────────── */
 export default function Builder() {
-  const { theme } = useTheme();
+  const { add, setOpen } = useCart();
   const [colors, setColors] = useState<ShirtColor[]>(FALLBACK_COLORS);
   const [designs, setDesigns] = useState<Design[]>(FALLBACK_DESIGNS);
+  const [stock, setStock] = useState<Record<string, Record<string, number>>>({});
   const [ci, setCi] = useState(2);
   const [di, setDi] = useState(0);
   const [pull, setPull] = useState(1);
-  const [size, setSize] = useState<(typeof SIZES)[number]>("M");
-  const [qty, setQty] = useState(1);
-  const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", phone: "", notes: "" });
-  const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">("idle");
-  const [err, setErr] = useState("");
-  const sheetRef = useRef<HTMLDivElement>(null);
+  const [placement, setPlacement] = useState<Placement>("frente");
+  const [counts, setCounts] = useState<Record<string, number>>({ M: 1 });
+  const [logo, setLogo] = useState<{ preview: string; url: string | null; name: string } | null>(null);
+  const [logoState, setLogoState] = useState<"idle" | "uploading" | "ready" | "error">("idle");
+  const [logoErr, setLogoErr] = useState("");
+  const [added, setAdded] = useState(0);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const sb = supabase();
     sb.from("shirt_colors")
       .select("slug,name,hex")
+      .eq("active", true)
       .order("sort")
       .then(({ data }) => data?.length && setColors(data));
     sb.from("designs")
-      .select("slug,name,category,ink_note,is_sample")
+      .select("slug,name,category,ink_note,is_sample,image_url")
+      .eq("active", true)
       .order("sort")
-      .then(({ data }) => data?.length && setDesigns(data));
-    // Diseño elegido desde la comunidad (?diseno=slug&color=slug)
+      .then(({ data }) => {
+        if (!data?.length) return;
+        // "Tu logo aquí" siempre disponible como pantalla para subir el propio logo
+        const hasLogo = data.some((d) => d.slug === "tu-logo");
+        setDesigns(hasLogo ? data : [...data, FALLBACK_DESIGNS.find((d) => d.slug === "tu-logo")!]);
+      });
+    sb.from("inventory")
+      .select("color_slug,size,stock")
+      .then(({ data }) => {
+        const map: Record<string, Record<string, number>> = {};
+        (data ?? []).forEach((r) => ((map[r.color_slug] ??= {})[r.size] = r.stock));
+        setStock(map);
+      });
     const q = new URLSearchParams(window.location.search);
     const d = q.get("diseno");
     const c = q.get("color");
@@ -332,207 +345,239 @@ export default function Builder() {
 
   const color = colors[Math.min(ci, colors.length - 1)];
   const design = designs[Math.min(di, designs.length - 1)];
+  const isLogo = design.slug === "tu-logo";
+  const colorStock = stock[color.slug];
+  const available = (s: string) => (colorStock && s in colorStock ? colorStock[s] : Infinity);
+
+  // Ajustar cantidades si el color elegido tiene menos existencias
+  useEffect(() => {
+    setCounts((c) => {
+      const next: Record<string, number> = {};
+      for (const [s, q] of Object.entries(c)) {
+        const cap = available(s);
+        if (cap > 0) next[s] = Math.min(q, cap);
+      }
+      return next;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [color.slug, stock]);
+
+  const print: Print = {
+    design: design.slug,
+    designImage: isLogo ? null : design.image_url,
+    logoUrl: isLogo ? logo?.url ?? logo?.preview ?? null : null,
+    placement,
+  };
 
   const pickDesign = (i: number) => {
     setDi(i);
     setPull((p) => p + 1);
   };
 
-  const openSheet = () => {
-    setOpen(true);
-    requestAnimationFrame(() => sheetRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
-  };
-
-  const summary = `Hola Basic&Print, quiero este pedido:
-• Camiseta: ${color.name}
-• Diseño: ${design.name}
-• Talla: ${size}
-• Cantidad: ${qty}${form.notes ? `\n• Notas: ${form.notes}` : ""}
-Nombre: ${form.name}
-Tel: ${form.phone}`;
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErr("");
-    if (form.name.trim().length < 2) return setErr("Escribe tu nombre para saber a quién responder.");
-    if (form.phone.replace(/\D/g, "").length < 8) return setErr("Escribe un teléfono de 8 dígitos o más.");
-    setStatus("saving");
-    const sb = supabase();
-    const { data: u } = await sb.auth.getUser();
-    const { error } = await sb.from("orders").insert({
-      user_id: u.user?.id ?? null,
-      customer_name: form.name.trim(),
-      phone: form.phone.trim(),
-      shirt_color: color.slug,
-      design_slug: design.slug,
-      size,
-      quantity: qty,
-      notes: form.notes.trim() || null,
-      style: theme,
+  const total = useMemo(() => Object.values(counts).reduce((a, b) => a + b, 0), [counts]);
+  const bump = (s: string, d: number) =>
+    setCounts((c) => {
+      const v = Math.max(0, Math.min(available(s), 500, (c[s] ?? 0) + d));
+      const next = { ...c, [s]: v };
+      if (!v) delete next[s];
+      return next;
     });
-    if (error) {
-      setStatus("error");
-      setErr("No pudimos guardar el pedido. Igual puedes enviarlo por WhatsApp con el botón de abajo.");
+
+  const onFile = async (file?: File | null) => {
+    setLogoErr("");
+    if (!file) return;
+    if (!LOGO_TYPES.includes(file.type)) {
+      setLogoState("error");
+      setLogoErr("Sube una imagen PNG, JPG, SVG o WEBP.");
       return;
     }
-    setStatus("done");
-    window.open(whatsappLink(summary), "_blank", "noopener");
+    if (file.size > 5 * 1024 * 1024) {
+      setLogoState("error");
+      setLogoErr("La imagen pesa más de 5 MB. Prueba con una versión más liviana.");
+      return;
+    }
+    const preview = URL.createObjectURL(file);
+    setLogo({ preview, url: null, name: file.name });
+    setLogoState("uploading");
+    const logoIdx = designs.findIndex((d) => d.slug === "tu-logo");
+    if (logoIdx >= 0) pickDesign(logoIdx);
+    const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "png";
+    const path = `${crypto.randomUUID()}.${ext}`;
+    const sb = supabase();
+    const { error } = await sb.storage.from("logos").upload(path, file, { contentType: file.type, upsert: false });
+    if (error) {
+      setLogoState("error");
+      setLogoErr("No se pudo subir el logo. Revisa tu conexión e inténtalo otra vez.");
+      return;
+    }
+    const url = sb.storage.from("logos").getPublicUrl(path).data.publicUrl;
+    setLogo({ preview, url, name: file.name });
+    setLogoState("ready");
+    setPull((p) => p + 1);
   };
 
+  const addToCart = () => {
+    if (!total) return;
+    if (isLogo && !logo?.url) {
+      setLogoErr(logoState === "uploading" ? "Espera a que termine de subir tu logo." : "Sube tu logo antes de agregar.");
+      return;
+    }
+    add(
+      Object.entries(counts).map(([size, qty]) => ({
+        colorSlug: color.slug,
+        colorName: color.name,
+        hex: color.hex,
+        designSlug: design.slug,
+        designName: `${design.name}${placement !== "frente" ? ` (${placement})` : ""}`,
+        logoUrl: isLogo ? logo?.url : null,
+        size,
+        qty,
+      }))
+    );
+    setAdded(total);
+  };
+
+  useEffect(() => {
+    if (!added) return;
+    const t = window.setTimeout(() => setAdded(0), 4000);
+    return () => window.clearTimeout(t);
+  }, [added]);
+
   return (
-    <>
-      <div className="hero">
-        <Press colors={colors} index={Math.min(ci, colors.length - 1)} onIndex={setCi} design={design.slug} pull={pull} />
-        <div className="panel">
-          <h1 className="hero-title">
-            Tu camiseta,
-            <br />
-            <span>impresa a tu gusto.</span>
-          </h1>
-          <p className="hero-lede">Gira la prensa para elegir el color, pasa las pantallas para elegir el diseño y pídela por WhatsApp.</p>
+    <div className="hero">
+      <Press colors={colors} index={Math.min(ci, colors.length - 1)} onIndex={setCi} print={print} pull={pull} />
+      <div className="panel">
+        <h1 className="hero-title">
+          Tu camiseta,
+          <br />
+          <span>impresa a tu gusto.</span>
+        </h1>
 
-          <Screens designs={designs} index={Math.min(di, designs.length - 1)} onIndex={pickDesign} />
+        <Screens designs={designs} index={Math.min(di, designs.length - 1)} onIndex={pickDesign} logoPreview={logo?.preview ?? null} />
 
-          <div className="size-row">
-            <h2 className="panel-label" id="talla-l">
-              Talla
-            </h2>
-            <div className="size-tabs" role="radiogroup" aria-labelledby="talla-l">
-              {SIZES.map((s) => (
-                <button key={s} role="radio" aria-checked={size === s} onClick={() => setSize(s)}>
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="qty-row">
-            <h2 className="panel-label" id="cant-l">
-              Cantidad
-            </h2>
-            <div className="stepper" aria-labelledby="cant-l">
-              <button onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label="Menos">
-                <Minus aria-hidden="true" />
-              </button>
-              <input
-                inputMode="numeric"
-                value={qty}
-                aria-label="Cantidad de camisetas"
-                onChange={(e) => {
-                  const v = parseInt(e.target.value.replace(/\D/g, "") || "1", 10);
-                  setQty(Math.min(500, Math.max(1, v)));
+        <div
+          className={`logo-drop ${isLogo ? "is-focus" : ""}`}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => {
+            e.preventDefault();
+            onFile(e.dataTransfer.files?.[0]);
+          }}
+        >
+          <input
+            ref={fileRef}
+            type="file"
+            accept={LOGO_TYPES.join(",")}
+            className="sr-only"
+            id="logo-file"
+            onChange={(e) => onFile(e.target.files?.[0])}
+          />
+          {logo ? (
+            <p className="logo-status">
+              {logoState === "uploading" && <span className="spinner" aria-hidden="true" />}
+              {logoState === "ready" && <Check aria-hidden="true" />}
+              <span>
+                {logoState === "uploading" ? "Subiendo " : ""}
+                <strong>{logo.name}</strong>
+              </span>
+              <button
+                className="icon-btn"
+                aria-label="Quitar logo"
+                onClick={() => {
+                  setLogo(null);
+                  setLogoState("idle");
+                  if (fileRef.current) fileRef.current.value = "";
                 }}
-              />
-              <button onClick={() => setQty((q) => Math.min(500, q + 1))} aria-label="Más">
-                <Plus aria-hidden="true" />
+              >
+                <X aria-hidden="true" />
               </button>
-            </div>
-            {qty >= 12 && <p className="qty-hint">Pedido de grupo: te cotizamos precio especial.</p>}
-          </div>
+            </p>
+          ) : (
+            <label htmlFor="logo-file" className="logo-btn">
+              <Upload aria-hidden="true" />
+              <span>
+                <strong>Sube tu propio logo</strong> PNG, JPG o SVG hasta 5 MB. Mejor con fondo transparente.
+              </span>
+            </label>
+          )}
+          {logoErr && (
+            <p className="form-error" role="alert">
+              <AlertCircle aria-hidden="true" /> {logoErr}
+            </p>
+          )}
+        </div>
 
-          <button className="squeegee" onClick={openSheet}>
-            <span>Imprimir y pedir</span>
+        <div className="place-row">
+          <h2 className="panel-label" id="lugar-l">
+            Dónde va
+          </h2>
+          <div className="seg-mini" role="radiogroup" aria-labelledby="lugar-l">
+            {PLACEMENTS.map((p) => (
+              <button
+                key={p.id}
+                role="radio"
+                aria-checked={placement === p.id}
+                onClick={() => {
+                  setPlacement(p.id);
+                  setPull((x) => x + 1);
+                }}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="size-grid-wrap">
+          <h2 className="panel-label" id="talla-l">
+            Tallas y cantidades <span className="label-note">puedes mezclar tallas</span>
+          </h2>
+          <ul className="size-grid" aria-labelledby="talla-l">
+            {SIZES.map((s) => {
+              const cap = available(s);
+              const q = counts[s] ?? 0;
+              const out = cap <= 0;
+              return (
+                <li key={s} className={`${q ? "has-qty" : ""} ${out ? "is-out" : ""}`}>
+                  <span className="size-name">{s}</span>
+                  {out ? (
+                    <span className="size-out">Agotada</span>
+                  ) : (
+                    <span className="size-step">
+                      <button onClick={() => bump(s, -1)} disabled={!q} aria-label={`Una menos talla ${s}`}>
+                        <Minus aria-hidden="true" />
+                      </button>
+                      <span className="size-qty" aria-live="polite" aria-label={`${q} talla ${s}`}>
+                        {q}
+                      </span>
+                      <button onClick={() => bump(s, 1)} disabled={q >= cap} aria-label={`Una más talla ${s}`}>
+                        <Plus aria-hidden="true" />
+                      </button>
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+          {total >= 12 && <p className="qty-hint">Pedido de grupo: te cotizamos precio especial.</p>}
+        </div>
+
+        <div className="add-row">
+          <button className="squeegee" onClick={addToCart} disabled={!total}>
+            <span>
+              <ShoppingBag aria-hidden="true" />
+              {total ? `Agregar ${total} al carrito` : "Elige al menos una talla"}
+            </span>
           </button>
+          {added > 0 && (
+            <p className="added-note" role="status">
+              <Check aria-hidden="true" /> {added} en el carrito.{" "}
+              <button className="text-link" onClick={() => setOpen(true)}>
+                Ver carrito
+              </button>
+            </p>
+          )}
         </div>
       </div>
-
-      <div ref={sheetRef} className={`order-sheet ${open ? "is-open" : ""}`} aria-hidden={!open}>
-        {open && (
-          <form onSubmit={submit} className="sheet-inner" noValidate>
-            <RegMark className="corner tl" />
-            <RegMark className="corner tr" />
-            <RegMark className="corner bl" />
-            <RegMark className="corner br" />
-            <div className="sheet-preview">
-              <Shirt color={color.hex} design={design.slug} className="sheet-shirt" title="Tu camiseta" />
-            </div>
-            <div className="sheet-body">
-              <h2>Hoja de orden</h2>
-              <dl className="sheet-summary">
-                <div>
-                  <dt>Camiseta</dt>
-                  <dd>{color.name}</dd>
-                </div>
-                <div>
-                  <dt>Diseño</dt>
-                  <dd>{design.name}</dd>
-                </div>
-                <div>
-                  <dt>Talla</dt>
-                  <dd>{size}</dd>
-                </div>
-                <div>
-                  <dt>Cantidad</dt>
-                  <dd>{qty}</dd>
-                </div>
-              </dl>
-              <label>
-                Tu nombre
-                <input
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  autoComplete="name"
-                  maxLength={80}
-                  required
-                />
-              </label>
-              <label>
-                Teléfono / WhatsApp
-                <input
-                  value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  inputMode="tel"
-                  autoComplete="tel"
-                  maxLength={20}
-                  placeholder="7000 0000"
-                  required
-                />
-              </label>
-              <label>
-                Notas (opcional)
-                <textarea
-                  value={form.notes}
-                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                  maxLength={500}
-                  rows={3}
-                  placeholder="Ej.: nombres en la espalda, fecha que lo necesitas, tallas mezcladas…"
-                />
-              </label>
-              <p className="price-note">Te confirmamos precio y tiempo de entrega por WhatsApp.</p>
-              {err && (
-                <p className="form-error" role="alert">
-                  <AlertCircle aria-hidden="true" /> {err}
-                </p>
-              )}
-              {status === "done" ? (
-                <div className="form-ok" role="status">
-                  <Check aria-hidden="true" />
-                  <p>
-                    Pedido guardado. Si WhatsApp no se abrió,{" "}
-                    <a href={whatsappLink(summary)} target="_blank" rel="noopener noreferrer">
-                      ábrelo aquí
-                    </a>
-                    .
-                  </p>
-                </div>
-              ) : (
-                <button type="submit" className="squeegee" disabled={status === "saving"}>
-                  <span>
-                    <Send aria-hidden="true" />
-                    {status === "saving" ? "Guardando…" : "Enviar pedido por WhatsApp"}
-                  </span>
-                </button>
-              )}
-              {status === "error" && (
-                <a className="text-link" href={whatsappLink(summary)} target="_blank" rel="noopener noreferrer">
-                  Enviar por WhatsApp sin guardar
-                </a>
-              )}
-              {!WHATSAPP && <p className="dev-note">Falta configurar el número de WhatsApp del negocio.</p>}
-            </div>
-          </form>
-        )}
-      </div>
-    </>
+    </div>
   );
 }

@@ -19,7 +19,14 @@ export function supabase(): SupabaseClient {
 }
 
 export type ShirtColor = { slug: string; name: string; hex: string };
-export type Design = { slug: string; name: string; category: string; ink_note: string | null; is_sample: boolean };
+export type Design = {
+  slug: string;
+  name: string;
+  category: string;
+  ink_note: string | null;
+  is_sample: boolean;
+  image_url?: string | null;
+};
 
 export const FALLBACK_COLORS: ShirtColor[] = [
   { slug: "blanco", name: "Blanco", hex: "#F4F4F2" },
