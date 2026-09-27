@@ -54,7 +54,7 @@ export default function Shirt({ color, design, inkKey, className, title, animate
         <g
           key={`${design}-${inkKey ?? ""}`}
           className={animate ? "ink-pull" : undefined}
-          transform="translate(95 80) scale(0.55)"
+          transform="translate(86 74) scale(0.64)"
         >
           <DesignArt slug={design} inks={inks} />
         </g>
