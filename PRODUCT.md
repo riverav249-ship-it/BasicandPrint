@@ -26,8 +26,8 @@ El cliente arma su camiseta visualmente en la página de inicio y ve el resultad
 
 - Venta cerrada por WhatsApp: el pedido se registra en la base de datos y se abre WhatsApp con el resumen.
 - No hay pago en línea por ahora.
-- Páginas: Inicio (configurador con tornamesa de colores y carrusel de diseños), Historia / Nosotros, Comunidad (chat e ideas entre clientes), Promociones y retos de rachas con premios, Contacto.
-- El visitante puede cambiar el estilo del sitio entre dos opciones: Élite (elegante, para familias de alto poder adquisitivo) y Juvenil (divertido y fuera de lo común). Se ve futurista en ambos.
+- Páginas: Inicio (taller: el cliente elige color, estampa y mueve diseños, agrega texto, diseña frente y espalda, y elige tallas), Historia / Nosotros, Comunidad (chat e ideas entre clientes), Promociones y retos de rachas con premios, Contacto.
+- Un solo estilo claro y accesible para todo público; la página adopta el color de la camiseta que elige el cliente. Debe sorprender y hacer del diseño una experiencia entretenida.
 
 ## Capabilities and Constraints
 
@@ -37,7 +37,7 @@ El cliente arma su camiseta visualmente en la página de inicio y ve el resultad
 ## Brand Commitments
 
 - Nombre: Basic&Print.
-- Dos estilos seleccionables por el cliente: Élite y Juvenil.
+- El cliente diseña su propia camiseta como experiencia divertida; la página toma el color que él elige.
 
 ## Evidence on Hand
 
@@ -48,4 +48,4 @@ Ninguna todavía. No inventar precios, testimonios, clientes ni cifras; todo con
 1. Ver antes de pedir: el cliente siempre ve su camiseta armada.
 2. Un camino corto al WhatsApp.
 3. La comunidad y los retos traen de vuelta al cliente.
-4. Un solo negocio, dos voces: Élite y Juvenil comparten estructura y cambian de carácter.
+4. Diseñar es jugar: cada acción tiene una respuesta visible (tinta, estampado, giro, impresión).

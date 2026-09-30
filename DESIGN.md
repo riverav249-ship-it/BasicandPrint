@@ -1,42 +1,29 @@
 ---
 name: Basic&Print
-description: Serigrafía en camisetas configurada como un auto de lujo, en dos estilos (Élite y Juvenil).
+description: Taller de camisetas donde el cliente diseña la suya jugando; la página toma el color de su camiseta.
 colors:
-  elite-graphite: "#141518"
-  elite-graphite-raised: "#1c1e22"
-  elite-panel: "#0d0e10"
-  elite-warm-white: "#ece7df"
-  elite-stone: "#aaa59d"
-  elite-champagne: "#d9bf8c"
-  elite-champagne-ink: "#17140f"
-  elite-plate: "#e9e4da"
-  juvenil-acid-lime: "#d4ff3d"
-  juvenil-lime-light: "#e6ff8f"
-  juvenil-ink: "#111204"
-  juvenil-olive: "#3b4210"
-  juvenil-violet: "#5b2bff"
-  juvenil-papaya: "#ff5a1f"
-  juvenil-cream-lime: "#f1ffcc"
+  paper: "#f4f4f1"
+  white: "#ffffff"
+  ink-black: "#141416"
+  graphite: "#55565c"
+  ink-default: "#2450b8"
   error: "#b3261e"
+  whatsapp: "#1faa53"
+  sticker-bed: "#f1f1ee"
 typography:
-  display-elite:
+  display:
     fontFamily: "Archivo Variable, system-ui, sans-serif"
-    fontSize: "clamp(1.9rem, 2.9vw, 3.1rem)"
-    fontWeight: 330
-    lineHeight: 1.04
-    letterSpacing: "0.04em"
-    fontVariation: "'wdth' 125"
-  display-juvenil:
-    fontFamily: "Archivo Variable, system-ui, sans-serif"
-    fontSize: "clamp(1.9rem, 2.9vw, 3.1rem)"
-    fontWeight: 900
-    lineHeight: 0.9
-    letterSpacing: "-0.015em"
-    fontVariation: "'wdth' 125"
+    fontSize: "clamp(2.1rem, 4.6vw, 4.2rem)"
+    fontWeight: 800
+    lineHeight: 1
+    letterSpacing: "-0.025em"
+    fontVariation: "'wdth' 112"
   headline:
     fontFamily: "Archivo Variable, system-ui, sans-serif"
-    fontSize: "clamp(2rem, 4.4vw, 4rem)"
-    fontVariation: "'wdth' 125"
+    fontSize: "1.5rem"
+    fontWeight: 800
+    lineHeight: 1.1
+    fontVariation: "'wdth' 112"
   body:
     fontFamily: "Archivo Variable, system-ui, sans-serif"
     fontSize: "1.0625rem"
@@ -46,113 +33,105 @@ typography:
     fontFamily: "Archivo Variable, system-ui, sans-serif"
     fontSize: "0.72rem"
     fontWeight: 700
-    letterSpacing: "0.2em"
+    letterSpacing: "0.1em"
+  shirt-text-divertida:
+    fontFamily: "Bungee, sans-serif"
+    fontWeight: 400
 rounded:
-  elite: "2px"
-  elite-lg: "4px"
-  juvenil: "12px"
-  juvenil-lg: "20px"
+  sm: "8px"
+  md: "12px"
+  lg: "22px"
+  shirt-focus: "24px"
   pill: "999px"
 spacing:
   gutter: "clamp(16px, 4vw, 56px)"
   band: "clamp(64px, 8vw, 120px)"
-  panel-gap: "20px"
+  panel: "clamp(18px, 2.4vw, 32px)"
 components:
-  button-primary-elite:
-    backgroundColor: "{colors.elite-champagne}"
-    textColor: "{colors.elite-champagne-ink}"
-    rounded: "{rounded.elite}"
-    height: "56px"
-    padding: "0 30px"
-  button-primary-juvenil:
-    backgroundColor: "{colors.juvenil-violet}"
-    textColor: "#ffffff"
+  button-primary:
+    backgroundColor: "var(--ink)"
+    textColor: "var(--ink-fg)"
     rounded: "{rounded.pill}"
     height: "56px"
-    padding: "0 30px"
-  spec-panel-elite:
-    backgroundColor: "{colors.elite-panel}"
-    textColor: "{colors.elite-warm-white}"
-  spec-panel-juvenil:
-    backgroundColor: "{colors.juvenil-ink}"
-    textColor: "{colors.juvenil-cream-lime}"
-  design-plate-elite:
-    backgroundColor: "{colors.elite-plate}"
-    rounded: "{rounded.elite-lg}"
-  design-plate-juvenil:
-    backgroundColor: "{colors.juvenil-cream-lime}"
-    rounded: "{rounded.juvenil-lg}"
+    padding: "0 28px"
+  button-secondary:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink-black}"
+    rounded: "{rounded.pill}"
+    padding: "12px 20px"
+  tool-panel:
+    backgroundColor: "{colors.white}"
+    textColor: "{colors.ink-black}"
+    padding: "{spacing.panel}"
+  sticker:
+    backgroundColor: "{colors.white}"
+    rounded: "{rounded.md}"
+    padding: "8px"
+  dark-band:
+    backgroundColor: "{colors.ink-black}"
+    textColor: "{colors.paper}"
 ---
 
 # Design System: Basic&Print
 
 ## Overview
 
-**Creative North Star: "El estudio configurador"**
+**Creative North Star: "El taller de juego"**
 
-La camiseta se configura como un auto de lujo. La página de inicio es un estudio con ciclorama: la camiseta gira sobre una tornamesa iluminada, un barrido de luz la cruza cada vez que cambia el diseño, y a la derecha una hoja técnica guarda la configuración. El visitante elige uno de dos estilos (selector en la cabecera, guardado en `localStorage` como `bp-theme`); ambos comparten estructura y cambian material y voz.
+La página de inicio es un taller donde el cliente diseña su propia camiseta jugando. A la izquierda está el escenario con una camiseta grande y realista; a la derecha, cuatro herramientas numeradas (Color, Diseño, Texto, Tallas). Todo lo demás es papel claro y tinta negra, para que la camiseta sea lo único con color fuerte.
 
-- **Élite**: estudio grafito ahumado con luz champán; tipografía expandida ligera en mayúsculas espaciadas; esquinas casi rectas. Para familias y empresas que esperan una marca premium.
-- **Juvenil**: ciclorama lima ácido empapado con franjas de librea violeta y papaya; la misma tipografía en negra itálica; formas redondeadas y píldoras.
+La sorpresa viene del comportamiento, no de la decoración: al elegir un color la tinta inunda el escenario y **todo el sitio adopta ese color** (botones, subrayados, contadores). Los diseños se estampan con un golpe y una salpicadura, se arrastran y se agrandan sobre la tela, el cliente escribe su nombre en tres estilos de letra y le da la vuelta a la camiseta para diseñar la espalda. Al pedir, una pasada de luz "imprime" la prenda.
 
 **Key Characteristics:**
-- Ciclorama, tornamesa con aro de luz, reflejo de la prenda y barrido de luz son el mundo; no hay tarjetas de producto.
-- La hoja técnica (panel oscuro) contrasta con el estudio en ambos estilos.
-- Cifras tabulares (contador de color, piezas) como en una ficha técnica.
-- Rechaza la grilla de tienda y la web futurista negra con neón.
+- Un solo estilo claro y accesible para todo público; el color lo pone el cliente.
+- La camiseta es la protagonista; la interfaz es blanca, negra y en píldoras.
+- Una acción a la vez: pestañas numeradas y un botón "Siguiente".
+- Movimiento con propósito: inundación de tinta, estampado, giro y pasada de impresión; nada más.
 
 ## Colors
 
-Élite es una paleta restringida: grafito y un solo acento champán. Juvenil está empapada: el lima es la superficie, el violeta la acción y el papaya solo aparece en la librea.
+Paleta restringida: papel y tinta negra. El único acento es `--ink`, que toma el color de la camiseta elegida.
 
-- **Grafito** (`#141518`): fondo de página Élite. **Panel** (`#0d0e10`): hoja técnica, proceso y pie.
-- **Blanco cálido** (`#ece7df`) y **piedra** (`#aaa59d`): texto primario y secundario Élite.
-- **Champán** (`#d9bf8c`): el único acento Élite: botón principal, aro de la tornamesa, selección.
-- **Lima ácido** (`#d4ff3d`): superficie Juvenil y acento dentro del panel negro.
-- **Tinta** (`#111204`): texto Juvenil, panel, disco de la tornamesa.
-- **Violeta eléctrico** (`#5b2bff`): acción principal Juvenil y franja de librea. **Papaya** (`#ff5a1f`): solo franja de librea, nunca texto.
-
-Dentro de `.panel`, `.process` y el pie, los tokens se reasignan (`--fg` pasa a `--ink-field-fg`, `--accent` a `--panel-accent`), así que Juvenil muestra lima sobre negro ahí.
+- **Papel** (`#f4f4f1`): fondo del sitio. **Blanco** (`#ffffff`): panel de herramientas, calcomanías, campos.
+- **Tinta negra** (`#141416`): texto, pestaña activa, navegación activa, bandas oscuras y pie.
+- **Grafito** (`#55565c`): texto secundario.
+- **`--ink`** (dinámico; por defecto `#2450b8`): botón principal, subrayado de la pestaña activa, contador del carrito, selección de texto. Se calcula en `Studio.tsx`: si la camiseta es muy clara (blanca), `--ink` pasa a tinta negra para no perder contraste; `--ink-fg` se elige por luminancia.
+- **Tinte del escenario**: 30 % del color de la camiseta sobre papel; para camisetas claras, gris `#d7d8d4`.
+- **Error** `#b3261e` y **WhatsApp** `#1faa53` solo en sus componentes.
 
 ## Typography
 
-Una sola familia: **Archivo Variable** con eje de ancho (`@fontsource-variable/archivo/wdth.css`). La exhibición usa `font-stretch: 125%`; el texto corrido usa 100%.
+**Archivo Variable** con eje de ancho. Títulos a peso 800 y 112 % de ancho, en minúsculas con tracking `-0.025em`; texto a 400. Etiquetas de datos en mayúsculas pequeñas con tracking de 0.1em. Cifras tabulares en contadores.
 
-- Exhibición Élite: peso 330, mayúsculas, `letter-spacing: 0.04em`, altura de línea 1.04.
-- Exhibición Juvenil: peso 900 itálica, mayúsculas, `-0.015em`, altura de línea 0.9.
-- Énfasis (`<em>` en el título) cambia solo el color al acento, no el estilo.
-- Etiquetas: 0.66–0.78rem, peso 700, mayúsculas con tracking amplio (`--label-track`).
-- Números de ficha: `font-variant-numeric: tabular-nums`, rellenados a dos cifras (03 / 08).
+Para el texto que el cliente pone en la camiseta hay tres estilos: **Deportiva** (Archivo 900 itálica expandida), **Elegante** (Archivo 300 expandida, espaciada) y **Divertida** (Bungee).
 
 ## Layout
 
-- Inicio: dos columnas `1.62fr / minmax(360px, 1fr)`. El estudio es `position: sticky` a la altura de la ventana en escritorio, así la camiseta sigue a la vista mientras se llena la hoja técnica. Bajo 980px el estudio va primero y deja de ser sticky.
-- Bandas con relleno `clamp(64px, 8vw, 120px)` y márgenes laterales `clamp(16px, 4vw, 56px)`.
-- La gama ("Imprimimos para") es una fila de cuatro mini-estudios, dos por fila bajo 1180px.
-- El proceso es una pista horizontal con nodos; se apila en móvil.
+- Taller: dos columnas `1fr / minmax(360px, 440px)`. El escenario es sticky a la altura de la ventana en escritorio.
+- Bajo 980px: el escenario queda sticky arriba (46svh) y las pestañas se pegan debajo, así la camiseta siempre está a la vista; al cambiar de herramienta la página se acomoda sola.
+- Bandas con relleno `clamp(64px, 8vw, 120px)`; gama de cuatro ejemplos (dos por fila en pantallas medianas).
 
 ## Elevation & Depth
 
-La profundidad viene de la luz del estudio, no de tarjetas: degradado del ciclorama, luz principal radial, sombra bajo el disco, `drop-shadow` en las camisetas y `-webkit-box-reflect` en la camiseta del frente. Los botones principales llevan una sombra suave teñida del acento. Nada de sombras duras desplazadas.
+Casi plano. La profundidad es de la camiseta: luz de estudio, pliegues, sombra propia y una sombra elíptica en el piso. Las calcomanías se levantan un poco al pasar el cursor. Los botones principales llevan una sombra suave teñida de `--ink`.
 
 ## Shapes
 
-Élite: radios 2px / 4px, bordes de 1px. Juvenil: radios 12px / 20px, píldoras (`999px`) en botones, selector y navegación activa, bordes de 2px. Las fichas de pintura y los botones de flecha son siempre círculos.
+Píldoras (`999px`) para botones, navegación, selector frente/espalda y chips. Tarjetas y campos a 12px; bandas de ejemplo a 22px. Fichas de color y tintas en círculo.
 
 ## Components
 
-- **Tornamesa** (`Builder.tsx › Press`): anillo 3D (`rotateY`) con arrastre, flechas y teclado; disco elíptico con aro `--rim`; nombre del color, contador tabular y fila de **fichas de pintura** (radiogroup) debajo.
-- **Barrido de luz** (`.light-sweep`): un solo paso de 1.2s por selección de diseño o ubicación; la impresión se revela de izquierda a derecha (`.ink-pull`, clip-path).
-- **Placas de diseño** (`.screen-frame .mesh`): carrusel horizontal; la placa activa lleva aro de acento y un reflejo que la cruza. Los diseños de ejemplo muestran la etiqueta "ejemplo".
-- **Hoja técnica** (`.spec-sheet`): Color, Diseño, Ubicación y Piezas en cuatro celdas con filetes; dos por fila en móvil.
-- **Botón principal** (`.squeegee`, nombre heredado): relleno de acento, texto de exhibición, reflejo que lo cruza al pasar el cursor.
-- **Selector de estilo** (`.style-switch`): Élite / Juvenil con ficha de color; el pedido guarda Élite como `formal` y Juvenil como `informal` por la restricción de la base de datos.
+- **Camiseta** (`Shirt.tsx`): vector con luz de estudio, volumen en bordes, mangas, pliegues, tejido fino, costuras y cuello acanalado. Acepta capas propias (`children`) bajo la tela y controles (`overlay`) encima.
+- **Escenario** (`Studio.tsx`): inundación de tinta (`clip-path` circular), selector Frente/Espalda con punto cuando ese lado tiene diseño, giro 3D de la prenda, botón "Dar la vuelta".
+- **Capas**: diseño o logo y texto por lado; se arrastran con el puntero, se escalan con el asa o el control de tamaño, y con el teclado (flechas, + y −).
+- **Calcomanías**: cuadrícula de diseños con filtro por categoría; la primera casilla sube el logo del cliente.
+- **Tallas y resumen**: existencias por color y talla; resumen con camiseta, frente, espalda y piezas; botón "Imprimir y agregar al pedido".
 
 ## Do's and Don'ts
 
-- **Do** mostrar siempre la camiseta armada antes del pedido.
-- **Do** mantener un solo momento de luz por selección, con `cubic-bezier(0.16, 1, 0.3, 1)`; con movimiento reducido el barrido se oculta.
-- **Do** marcar como "ejemplo" todo diseño, premio o contenido de muestra.
-- **Don't** agregar neón brillante ni halos de color sin desplazamiento.
-- **Don't** usar papaya para texto ni el violeta sobre el panel negro.
-- **Don't** poner etiquetas pequeñas (kickers) encima de los títulos.
+- **Do** dejar que el color de la camiseta sea el único color fuerte de la pantalla.
+- **Do** mostrar una herramienta a la vez y siempre la camiseta armada.
+- **Do** marcar como "ejemplo" todo diseño o premio de muestra.
+- **Don't** agregar fondos decorativos, degradados o texturas detrás de la camiseta.
+- **Don't** usar rebotes en botones o menús; el único gesto elástico es el estampado.
+- **Don't** poner etiquetas pequeñas encima de los títulos.

@@ -486,7 +486,7 @@ export default function Admin() {
               <>
                 <CrudTable
                   title="Colores de camiseta"
-                  help="Los colores activos aparecen en la tornamesa del inicio, en el orden indicado."
+                  help="Los colores activos aparecen en el taller del inicio, en el orden indicado."
                   table="shirt_colors"
                   keyField="slug"
                   newRow={{ name: "", hex: "#FFFFFF", sort: 99, active: true }}

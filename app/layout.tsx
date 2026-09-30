@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/archivo/wdth.css";
 import "@fontsource-variable/archivo/wdth-italic.css";
+import "@fontsource/bungee/latin-400.css";
 import "./globals.css";
-import { ThemeProvider, themeBootScript } from "@/components/ThemeProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import CartDrawer from "@/components/CartDrawer";
@@ -24,9 +25,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       data-theme="elite"
       suppressHydrationWarning
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
-      </head>
       <body>
         <ThemeProvider>
           <CartProvider>

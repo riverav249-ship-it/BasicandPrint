@@ -112,7 +112,7 @@ export default function CartDrawer() {
         ) : lines.length === 0 ? (
           <div className="cart-empty">
             <ShoppingBag aria-hidden="true" />
-            <p>Tu pedido está vacío. Gira la tornamesa, elige diseño y tallas, y agrégalas aquí.</p>
+            <p>Tu pedido está vacío. Diseña tu camiseta en el taller y agrégala aquí.</p>
             <button className="text-link" onClick={() => setOpen(false)}>
               Seguir armando
             </button>

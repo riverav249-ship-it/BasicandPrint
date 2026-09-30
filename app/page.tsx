@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Builder from "@/components/Builder";
+import Studio from "@/components/Studio";
 import Shirt from "@/components/Shirt";
 
 const FOR_WHO = [
@@ -34,7 +34,7 @@ const FOR_WHO = [
 ];
 
 const STEPS = [
-  { t: "Configuras", d: "Color, diseño, talla y cantidad aquí mismo." },
+  { t: "Diseñas", d: "Color, diseño, tu texto y las tallas, aquí mismo." },
   { t: "Confirmamos", d: "Te escribimos por WhatsApp con precio y fecha." },
   { t: "Preparamos la pantalla", d: "Un marco por cada tinta de tu diseño." },
   { t: "Imprimimos", d: "Tinta por tinta, y curamos al calor para que dure." },
@@ -43,7 +43,7 @@ const STEPS = [
 export default function Home() {
   return (
     <>
-      <Builder />
+      <Studio />
 
       <section className="band lineup" aria-labelledby="para-quien">
         <h2 id="para-quien" className="band-title">
@@ -53,12 +53,12 @@ export default function Home() {
           {FOR_WHO.map((w) => (
             <li key={w.t}>
               <a href={w.href} className="lineup-item">
-                <span className="lineup-stage" aria-hidden="true">
+                <span className="lineup-stage" aria-hidden="true" style={{ ["--c" as string]: w.hex }}>
                   <Shirt color={w.hex} design={w.design} className="lineup-shirt" />
                 </span>
                 <h3>{w.t}</h3>
                 <p>{w.d}</p>
-                <span className="lineup-go">Configurar este ejemplo</span>
+                <span className="lineup-go">Diseñar a partir de este</span>
               </a>
             </li>
           ))}

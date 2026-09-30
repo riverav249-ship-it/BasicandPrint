@@ -150,6 +150,7 @@ export const ARTS: Record<string, Art> = {
 };
 
 export function DesignArt({ slug, inks }: { slug: string; inks: Inks }) {
+  if (slug === "texto") return null;
   const art = ARTS[slug] ?? tuLogo;
   return art(inks);
 }
