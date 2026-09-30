@@ -5,15 +5,15 @@ primary_target: "app/page.tsx"
 related_targets: []
 ---
 
-Scope: whole site (Inicio armador, Historia, Comunidad, Promos y retos, Contacto). Visitor mode: Persuade on Inicio/Promos; Operate on Comunidad.
-Audience: personas/regalos, empresas y uniformes, jóvenes y colegios, grupos. Action: armar camiseta y enviar pedido por WhatsApp.
-Constraints: no precios ni testimonios inventados; diseños de ejemplo marcados; tres estilos formal/informal/teens.
+Scope: whole site (Inicio configurador, Historia, Comunidad, Promos y retos, Contacto). Visitor mode: Persuade on Inicio/Promos; Operate on Comunidad.
+Audience: familias de alto poder adquisitivo (Élite) y jóvenes que buscan lo fuera de lo común (Juvenil); también empresas, colegios y grupos. Action: configurar camiseta y enviar pedido por WhatsApp.
+Constraints: no precios ni testimonios inventados; diseños de ejemplo marcados; dos estilos Élite/Juvenil (reemplazan formal/informal); carruseles de color y de diseños conservan su función.
 
 ## Direction contract
-THESIS: El inicio es un pulpo de serigrafía: las camisetas giran en la prensa rotativa y el diseño elegido cae sobre la camiseta con un jalón de rasero. Rechaza la tienda estándar de grilla de productos + panel lateral de opciones.
-OWN-WORLD: Taller de serigrafía. Tinta plástica como campos de color que ocupan regiones enteras; marcas de registro (círculo con cruz) en esquinas; marcos de pantalla con malla como contenedores; el rasero (hoja ancha de goma) es la forma del botón principal; muestras de tinta como selector; semitono como textura. Formal = prensa grafito con tinta blanca y azul reflex, Bodoni Moda; Informal = cama de prensa amarilla tinta proceso con negro y magenta, Big Shoulders Display; Teens = rosado fluorescente empapado con lima y negro, Bungee.
-STORY: El visitante entiende en un vistazo que aquí arma su camiseta, la ve impresa, y la pide por WhatsApp; vuelve por la comunidad y las rachas.
-FIRST VIEWPORT: Izquierda 60%: la prensa rotativa en 3D con 6-8 camisetas en brazos, la del frente grande con el diseño impreso, flechas y arrastre. Derecha 40%: nombre Basic&Print grande, fila de marcos de pantalla con diseños (carrusel horizontal), pestañas de talla, y el rasero "Imprimir y pedir". Selector de estilo formal/informal/teens arriba.
-FORM: Taller y prensa, posición 1 de mi lista ordenada (elegida por la dueña como pick); seed add09336 (degradado, sin retadores).
-Signature interaction: girar la prensa (3D rotateY) y el jalón del rasero que revela el diseño con clip-path. Motion grammar: ease-out exponencial, un solo momento de tinta por selección.
+THESIS: El inicio es el estudio de un configurador de auto de lujo: la camiseta gira sobre una plataforma iluminada en un ciclorama infinito y se arma como un vehículo a la medida. Rechaza la tienda de grilla de productos y la "web futurista" negra con neón.
+OWN-WORLD: Ciclorama curvo con piso reflejante, tornamesa con aro de luz, barrido de luz que recorre la prenda al cambiar, fichas de pintura como selector de color, hoja técnica con cifras tabulares y líneas de cota, resumen "Tu configuración". Élite = estudio grafito ahumado, luz champán, Archivo expandido ligero en mayúsculas espaciadas. Juvenil = ciclorama lima ácido empapado, libreas de carrera violeta eléctrico y papaya, Archivo expandido negro itálico.
+STORY: El visitante ve en un vistazo su camiseta girando en el estudio, cambia color y diseño como configura un auto, revisa su configuración y la pide por WhatsApp.
+FIRST VIEWPORT: Izquierda 62%: ciclorama con la tornamesa 3D (carrusel de colores), camiseta frontal grande con reflejo, nombre del color como "pintura" y contador; tira de fichas de pintura debajo. Derecha 38%: hoja técnica con título, carrusel de diseños como placas, ubicación, tallas, y botón "Configurar pedido". Selector Élite/Juvenil en la cabecera.
+FORM: Estudio configurador de auto, posición 1 de mi lista ordenada (elegida por la dueña como pick); seed 3356a5c7 (degradado, sin retadores).
+Signature interaction: girar la tornamesa (3D rotateY) con barrido de luz que cruza la prenda al elegir diseño. Motion grammar: ease-out exponencial, un solo barrido de luz por selección.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance

@@ -1,9 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource-variable/archivo";
-import "@fontsource/big-shoulders-display/latin-800";
-import "@fontsource/big-shoulders-display/latin-900";
-import "@fontsource/bodoni-moda/latin-700.css";
-import "@fontsource/bodoni-moda/latin-700-italic.css";
+import "@fontsource-variable/archivo/wdth.css";
+import "@fontsource-variable/archivo/wdth-italic.css";
 import "./globals.css";
 import { ThemeProvider, themeBootScript } from "@/components/ThemeProvider";
 import SiteHeader from "@/components/SiteHeader";
@@ -24,7 +21,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      data-theme="informal"
+      data-theme="elite"
       suppressHydrationWarning
     >
       <head>

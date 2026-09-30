@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "name": "Basic&Print",
+  "northStar": "El estudio configurador",
+  "themes": {
+    "elite": {
+      "bg": "#141518",
+      "bg2": "#1c1e22",
+      "fg": "#ece7df",
+      "fg2": "#aaa59d",
+      "accent": "#d9bf8c",
+      "accentFg": "#17140f",
+      "inkField": "#0d0e10",
+      "inkFieldFg": "#ece7df",
+      "plate": "#e9e4da",
+      "radius": "2px",
+      "radiusLg": "4px",
+      "buttonRadius": "2px",
+      "display": { "family": "Archivo Variable", "stretch": "125%", "weight": 330, "style": "normal", "tracking": "0.04em", "lineHeight": 1.04 }
+    },
+    "juvenil": {
+      "bg": "#d4ff3d",
+      "bg2": "#e6ff8f",
+      "fg": "#111204",
+      "fg2": "#3b4210",
+      "accent": "#5b2bff",
+      "accentFg": "#ffffff",
+      "inkField": "#111204",
+      "inkFieldFg": "#f1ffcc",
+      "panelAccent": "#d4ff3d",
+      "livery": ["#5b2bff", "#ff5a1f"],
+      "plate": "#f1ffcc",
+      "radius": "12px",
+      "radiusLg": "20px",
+      "buttonRadius": "999px",
+      "display": { "family": "Archivo Variable", "stretch": "125%", "weight": 900, "style": "italic", "tracking": "-0.015em", "lineHeight": 0.9 }
+    }
+  },
+  "motion": {
+    "ease": "cubic-bezier(0.16, 1, 0.3, 1)",
+    "signature": "Tornamesa rotateY 1.1s + un barrido de luz de 1.2s por selección; revelado de impresión izquierda→derecha 1s"
+  },
+  "shadows": {
+    "shirt": "drop-shadow(0 22px 20px rgba(0,0,0,0.35))",
+    "reflection": "-webkit-box-reflect: below 6px linear-gradient(transparent 62%, rgba(0,0,0,var(--reflect)))",
+    "buttonPrimary": "0 16px 28px -18px color-mix(in srgb, var(--accent) 70%, #000)"
+  }
+}

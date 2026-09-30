@@ -7,7 +7,7 @@ import { THEMES, useTheme } from "./ThemeProvider";
 import { useCart } from "@/lib/cart";
 
 const NAV = [
-  { href: "/", label: "Imprimir" },
+  { href: "/", label: "Configurar" },
   { href: "/historia", label: "Nosotros" },
   { href: "/comunidad", label: "Comunidad" },
   { href: "/promociones", label: "Promos y rachas" },
@@ -50,9 +50,9 @@ export default function SiteHeader() {
             </button>
           ))}
         </div>
-        <button className="cart-btn" onClick={() => setOpen(true)} aria-label={`Abrir carrito, ${count} camisetas`}>
+        <button className="cart-btn" onClick={() => setOpen(true)} aria-label={`Abrir pedido, ${count} camisetas`}>
           <ShoppingBag aria-hidden="true" />
-          <span className="cart-label">Carrito</span>
+          <span className="cart-label">Pedido</span>
           {count > 0 && (
             <span key={count} className="cart-count">
               {count}

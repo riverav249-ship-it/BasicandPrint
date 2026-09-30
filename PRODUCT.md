@@ -26,8 +26,8 @@ El cliente arma su camiseta visualmente en la página de inicio y ve el resultad
 
 - Venta cerrada por WhatsApp: el pedido se registra en la base de datos y se abre WhatsApp con el resumen.
 - No hay pago en línea por ahora.
-- Páginas: Inicio (armador con carrusel de colores y carrusel de diseños), Historia / Nosotros, Comunidad (chat e ideas entre clientes), Promociones y retos de rachas con premios, Contacto.
-- El visitante puede cambiar el estilo del sitio entre tres opciones: formal, informal, teens.
+- Páginas: Inicio (configurador con tornamesa de colores y carrusel de diseños), Historia / Nosotros, Comunidad (chat e ideas entre clientes), Promociones y retos de rachas con premios, Contacto.
+- El visitante puede cambiar el estilo del sitio entre dos opciones: Élite (elegante, para familias de alto poder adquisitivo) y Juvenil (divertido y fuera de lo común). Se ve futurista en ambos.
 
 ## Capabilities and Constraints
 
@@ -37,7 +37,7 @@ El cliente arma su camiseta visualmente en la página de inicio y ve el resultad
 ## Brand Commitments
 
 - Nombre: Basic&Print.
-- Tres estilos seleccionables por el cliente: formal, informal, teens.
+- Dos estilos seleccionables por el cliente: Élite y Juvenil.
 
 ## Evidence on Hand
 
@@ -48,4 +48,4 @@ Ninguna todavía. No inventar precios, testimonios, clientes ni cifras; todo con
 1. Ver antes de pedir: el cliente siempre ve su camiseta armada.
 2. Un camino corto al WhatsApp.
 3. La comunidad y los retos traen de vuelta al cliente.
-4. Un solo negocio, tres voces: formal, informal y teens comparten estructura y cambian de carácter.
+4. Un solo negocio, dos voces: Élite y Juvenil comparten estructura y cambian de carácter.

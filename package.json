@@ -10,8 +10,6 @@
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.3.0",
-    "@fontsource/big-shoulders-display": "^5.3.0",
-    "@fontsource/bodoni-moda": "^5.3.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.2",
     "lucide-react": "^1.48.0",

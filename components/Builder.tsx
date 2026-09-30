@@ -17,7 +17,7 @@ const LOGO_TYPES = ["image/png", "image/jpeg", "image/svg+xml", "image/webp"];
 
 type Print = { design: string; designImage?: string | null; logoUrl?: string | null; placement: Placement };
 
-/* ─────────────── Prensa rotativa (colores) ─────────────── */
+/* ─────────────── Tornamesa del estudio (colores) ─────────────── */
 function Press({
   colors,
   index,
@@ -69,12 +69,17 @@ function Press({
 
   return (
     <section className="press" aria-label="Color de camiseta">
+      <div className="cyc" aria-hidden="true">
+        <span className="cyc-wall" />
+        <span className="cyc-floor" />
+        <span className="cyc-key" />
+      </div>
       <div
         ref={stageRef}
         className={`press-stage ${drag ? "is-dragging" : ""}`}
         tabIndex={0}
         role="listbox"
-        aria-label="Prensa de colores. Usa las flechas para girar."
+        aria-label="Tornamesa de colores. Usa las flechas para girar."
         aria-activedescendant={`shirt-${active?.slug}`}
         onKeyDown={(e) => {
           if (e.key === "ArrowRight") {
@@ -101,6 +106,7 @@ function Press({
         onPointerCancel={onPointerUp}
       >
         <div className="press-bed" aria-hidden="true">
+          <span className="press-rim" />
           <span className="press-hub" />
         </div>
         <div className="press-ring" style={{ transform: `translateZ(calc(var(--r) * -1)) rotateY(${-rot}deg)` }}>
@@ -140,12 +146,12 @@ function Press({
                   className="platen-shirt"
                   title={`Camiseta ${c.name}`}
                 />
-                <span className="platen-arm" aria-hidden="true" />
+                <span className="platen-shadow" aria-hidden="true" />
               </div>
             );
           })}
         </div>
-        <span key={pull} className="squeegee-pass" aria-hidden="true" />
+        <span key={pull} className="light-sweep" aria-hidden="true" />
       </div>
 
       <div className="press-controls">
@@ -153,21 +159,45 @@ function Press({
           <ChevronLeft aria-hidden="true" />
         </button>
         <p className="press-label" aria-live="polite">
-          <span className="ink-dot" style={{ background: active?.hex }} aria-hidden="true" />
+          <span className="sr-only">Color: </span>
           <span className="press-label-name">{active?.name}</span>
           <span className="press-label-count">
-            {index + 1}/{n}
+            {String(index + 1).padStart(2, "0")}
+            <span aria-hidden="true"> / </span>
+            <span className="sr-only"> de </span>
+            {String(n).padStart(2, "0")}
           </span>
         </p>
         <button className="round-btn" onClick={() => go(1)} aria-label="Color siguiente">
           <ChevronRight aria-hidden="true" />
         </button>
       </div>
+
+      <div className="paint-chips" role="radiogroup" aria-label="Colores de camiseta">
+        {colors.map((c, i) => (
+          <button
+            key={c.slug}
+            role="radio"
+            aria-checked={i === index}
+            aria-label={c.name}
+            title={c.name}
+            className="paint-chip"
+            style={{ ["--chip" as string]: c.hex }}
+            onClick={() => {
+              if (i === index) return;
+              let diff = i - index;
+              if (diff > n / 2) diff -= n;
+              if (diff < -n / 2) diff += n;
+              go(diff);
+            }}
+          />
+        ))}
+      </div>
     </section>
   );
 }
 
-/* ─────────────── Carrusel de pantallas (diseños) ─────────────── */
+/* ─────────────── Carrusel de placas (diseños) ─────────────── */
 function Screens({
   designs,
   index,
@@ -193,15 +223,17 @@ function Screens({
     return () => ro.disconnect();
   }, []);
 
-  const frame = w < 380 ? 104 : 118;
+  const frame = w < 380 ? 96 : 112;
   const gap = 12;
   const offset = w / 2 - frame / 2 - index * (frame + gap) + dx;
-  const inks = inksFor("#EDEDEA");
+  const inks = inksFor("#F4F4F2");
 
   return (
     <div className="screens">
       <div className="screens-head">
-        <h2 className="panel-label">Diseño</h2>
+        <h2 className="panel-label">
+          Diseño <span className="panel-value">{designs[index]?.name}</span>
+        </h2>
         <div className="screens-nav">
           <button className="round-btn sm" onClick={() => onIndex(mod(index - 1, n))} aria-label="Diseño anterior">
             <ChevronLeft aria-hidden="true" />
@@ -216,7 +248,7 @@ function Screens({
         ref={wrapRef}
         tabIndex={0}
         role="listbox"
-        aria-label="Pantallas de diseño. Usa las flechas."
+        aria-label="Diseños. Usa las flechas."
         onKeyDown={(e) => {
           if (e.key === "ArrowRight") {
             e.preventDefault();
@@ -279,7 +311,10 @@ function Screens({
                     </svg>
                   )}
                 </span>
-                <span className="frame-name">{isLogo && logoPreview ? "Mi logo" : d.name}</span>
+                <span className="frame-name">
+                  {isLogo && logoPreview ? "Mi logo" : d.name}
+                  {d.is_sample && !isLogo && <span className="frame-tag">ejemplo</span>}
+                </span>
               </button>
             );
           })}
@@ -289,7 +324,7 @@ function Screens({
   );
 }
 
-/* ─────────────── Armador completo ─────────────── */
+/* ─────────────── Configurador completo ─────────────── */
 export default function Builder() {
   const { add, setOpen } = useCart();
   const [colors, setColors] = useState<ShirtColor[]>(FALLBACK_COLORS);
@@ -444,14 +479,20 @@ export default function Builder() {
   }, [added]);
 
   return (
-    <div className="hero">
+    <div className="hero studio">
       <Press colors={colors} index={Math.min(ci, colors.length - 1)} onIndex={setCi} print={print} pull={pull} />
       <div className="panel">
         <h1 className="hero-title">
-          Tu camiseta,
-          <br />
-          <span>impresa a tu gusto.</span>
+          <span className="v-elite">
+            Tu camiseta, <em>configurada a tu medida.</em>
+          </span>
+          <span className="v-juvenil">
+            Ármala tú. <em>Que nadie tenga otra igual.</em>
+          </span>
         </h1>
+        <p className="hero-lede">
+          Elige el color, el diseño y las tallas. Te confirmamos precio y fecha por WhatsApp.
+        </p>
 
         <Screens designs={designs} index={Math.min(di, designs.length - 1)} onIndex={pickDesign} logoPreview={logo?.preview ?? null} />
 
@@ -561,18 +602,40 @@ export default function Builder() {
           {total >= 12 && <p className="qty-hint">Pedido de grupo: te cotizamos precio especial.</p>}
         </div>
 
+        <dl className="spec-sheet" aria-label="Tu configuración">
+          <div>
+            <dt>Color</dt>
+            <dd>
+              <span className="ink-dot" style={{ background: color.hex }} aria-hidden="true" />
+              {color.name}
+            </dd>
+          </div>
+          <div>
+            <dt>Diseño</dt>
+            <dd>{isLogo ? (logo ? "Mi logo" : "Tu logo (por subir)") : design.name}</dd>
+          </div>
+          <div>
+            <dt>Ubicación</dt>
+            <dd>{PLACEMENTS.find((p) => p.id === placement)?.label}</dd>
+          </div>
+          <div>
+            <dt>Piezas</dt>
+            <dd className="num">{String(total).padStart(2, "0")}</dd>
+          </div>
+        </dl>
+
         <div className="add-row">
           <button className="squeegee" onClick={addToCart} disabled={!total}>
             <span>
               <ShoppingBag aria-hidden="true" />
-              {total ? `Agregar ${total} al carrito` : "Elige al menos una talla"}
+              {total ? `Agregar ${total} al pedido` : "Elige al menos una talla"}
             </span>
           </button>
           {added > 0 && (
             <p className="added-note" role="status">
-              <Check aria-hidden="true" /> {added} en el carrito.{" "}
+              <Check aria-hidden="true" /> {added} en tu pedido.{" "}
               <button className="text-link" onClick={() => setOpen(true)}>
-                Ver carrito
+                Ver pedido
               </button>
             </p>
           )}

@@ -8,7 +8,7 @@ import { supabase, whatsappLink, WHATSAPP } from "@/lib/supabase";
 const FAQ = [
   {
     q: "¿Puedo pedir colores y tallas diferentes en un mismo pedido?",
-    a: "Sí. En la prensa eliges color y diseño, marcas cuántas quieres de cada talla y las agregas al carrito. Repite con otro color o diseño y envías todo junto.",
+    a: "Sí. En el configurador eliges color y diseño, marcas cuántas quieres de cada talla y las agregas a tu pedido. Repite con otro color o diseño y envías todo junto.",
   },
   {
     q: "¿Qué archivo necesito para imprimir mi logo?",

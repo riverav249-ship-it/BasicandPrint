@@ -69,11 +69,11 @@ export default function Historia() {
           <h2 id="arma" className="band-title">
             Arma la tuya
           </h2>
-          <p>Elige color, diseño y talla en la prensa de la página de inicio.</p>
+          <p>Elige color, diseño y talla en el configurador de la página de inicio.</p>
         </div>
         <div className="invite-actions">
           <Link className="squeegee" href="/">
-            <span>Ir a la prensa</span>
+            <span>Ir al configurador</span>
           </Link>
           <Link className="text-link" href="/contacto">
             Escríbenos

@@ -1,24 +1,29 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
-export type Theme = "formal" | "informal";
+export type Theme = "elite" | "juvenil";
 export const THEMES: { id: Theme; label: string; hint: string }[] = [
-  { id: "formal", label: "Formal", hint: "Minimalista" },
-  { id: "informal", label: "Informal", hint: "Celeste y azul" },
+  { id: "elite", label: "Élite", hint: "Estudio grafito, luz champán" },
+  { id: "juvenil", label: "Juvenil", hint: "Lima ácido y libreas de carrera" },
 ];
 
+/** La base de datos guarda el estilo del pedido como formal/informal. */
+export const themeForOrders = (t: Theme) => (t === "elite" ? "formal" : "informal");
+
+const isTheme = (v: unknown): v is Theme => v === "elite" || v === "juvenil";
+
 const Ctx = createContext<{ theme: Theme; setTheme: (t: Theme) => void }>({
-  theme: "informal",
+  theme: "elite",
   setTheme: () => {},
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("informal");
+  const [theme, setThemeState] = useState<Theme>("elite");
 
   useEffect(() => {
     const current = document.documentElement.dataset.theme;
-    if (current === "formal" || current === "informal") setThemeState(current);
-    else document.documentElement.dataset.theme = "informal";
+    if (isTheme(current)) setThemeState(current);
+    else document.documentElement.dataset.theme = "elite";
   }, []);
 
   const setTheme = useCallback((t: Theme) => {
@@ -29,7 +34,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     try {
       localStorage.setItem("bp-theme", t);
     } catch {}
-    window.setTimeout(() => root.classList.remove("theme-shift"), 600);
+    window.setTimeout(() => root.classList.remove("theme-shift"), 700);
   }, []);
 
   return <Ctx.Provider value={{ theme, setTheme }}>{children}</Ctx.Provider>;
@@ -37,4 +42,5 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 export const useTheme = () => useContext(Ctx);
 
-export const themeBootScript = `try{var t=localStorage.getItem('bp-theme');if(t==='formal'||t==='informal')document.documentElement.dataset.theme=t;}catch(e){}`;
+/* Migra los estilos anteriores: formal → élite, informal/teens → juvenil. */
+export const themeBootScript = `try{var t=localStorage.getItem('bp-theme');if(t==='formal')t='elite';if(t==='informal'||t==='teens')t='juvenil';if(t==='elite'||t==='juvenil')document.documentElement.dataset.theme=t;}catch(e){}`;

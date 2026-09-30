@@ -1,6 +1,6 @@
 # Basic&Print
 
-Sitio de serigrafía en camisetas: el cliente gira la prensa para elegir el color, pasa las pantallas para elegir el diseño y envía el pedido por WhatsApp.
+Sitio de serigrafía en camisetas: el cliente gira la tornamesa del estudio para elegir el color, pasa las placas para elegir el diseño y envía el pedido por WhatsApp.
 
 ## Panel de administración
 Entra a `/admin` con tu correo (te llega un enlace). Desde ahí manejas:
@@ -13,13 +13,13 @@ Entra a `/admin` con tu correo (te llega un enlace). Desde ahí manejas:
 - **Equipo**: dar o quitar acceso al panel por correo.
 
 ## Páginas
-- `/` Prensa: carrusel de colores (3D) + carrusel de diseños + subir logo + ubicación (frente, pecho, espalda) + tallas mezcladas → carrito → pedido guardado y WhatsApp.
+- `/` Configurador: tornamesa de colores (3D) con fichas de pintura + carrusel de diseños + subir logo + ubicación (frente, pecho, espalda) + tallas mezcladas → carrito → pedido guardado y WhatsApp.
 - `/historia` Nosotros.
 - `/comunidad` Muro de ideas (crear, editar, votar, comentar) y chat en vivo. Acceso con enlace al correo.
 - `/promociones` Promociones y retos de racha con hoja de registro diaria.
 - `/contacto` Formulario (se guarda en la base) y botón de WhatsApp.
 
-Dos estilos seleccionables arriba a la derecha: Formal (minimalista) e Informal (celeste y azul).
+Dos estilos seleccionables arriba a la derecha: Élite (estudio grafito y champán) y Juvenil (lima ácido con violeta). En la base de datos el pedido guarda Élite como `formal` y Juvenil como `informal`.
 
 ## Tecnología
 Next.js 16 · Supabase (base de datos, cuentas, tiempo real) · Vercel.

@@ -4,7 +4,7 @@ import { X, Minus, Plus, Trash2, Send, AlertCircle, Check, ShoppingBag } from "l
 import Shirt from "./Shirt";
 import { useCart } from "@/lib/cart";
 import { supabase, whatsappLink } from "@/lib/supabase";
-import { useTheme } from "./ThemeProvider";
+import { themeForOrders, useTheme } from "./ThemeProvider";
 
 export default function CartDrawer() {
   const { lines, count, open, setOpen, setQty, remove, clear } = useCart();
@@ -57,7 +57,7 @@ export default function CartDrawer() {
       quantity: Math.min(500, count),
       total_items: count,
       notes: form.notes.trim() || null,
-      style: theme,
+      style: themeForOrders(theme),
     });
     const { error: e2 } = error
       ? { error }
@@ -90,7 +90,7 @@ export default function CartDrawer() {
           <h2 id="cart-t">
             Tu pedido <span>{count} {count === 1 ? "camiseta" : "camisetas"}</span>
           </h2>
-          <button className="icon-btn" ref={closeRef} onClick={() => setOpen(false)} aria-label="Cerrar carrito">
+          <button className="icon-btn" ref={closeRef} onClick={() => setOpen(false)} aria-label="Cerrar pedido">
             <X aria-hidden="true" />
           </button>
         </div>
@@ -112,7 +112,7 @@ export default function CartDrawer() {
         ) : lines.length === 0 ? (
           <div className="cart-empty">
             <ShoppingBag aria-hidden="true" />
-            <p>Tu carrito está vacío. Gira la prensa, elige diseño y tallas, y agrégalas aquí.</p>
+            <p>Tu pedido está vacío. Gira la tornamesa, elige diseño y tallas, y agrégalas aquí.</p>
             <button className="text-link" onClick={() => setOpen(false)}>
               Seguir armando
             </button>
