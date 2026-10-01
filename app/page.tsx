@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, Check, Droplet, PenLine, Shirt as ShirtIcon, Truck } from "lucide-react";
-import Shirt from "@/components/Shirt";
 import HeroCarousel from "@/components/home/HeroCarousel";
 import QuickDesigner from "@/components/home/QuickDesigner";
-import { FALLBACK_COLORS, whatsappLink } from "@/lib/constants";
+import { whatsappLink } from "@/lib/constants";
 
 const FEATURES = [
   { Icon: ShirtIcon, t: "Camisetas básicas de calidad" },
@@ -19,60 +18,16 @@ const CHECKS = [
   "Mira el resultado antes de imprimir",
 ];
 
-const photo = (slug: string) => FALLBACK_COLORS.find((c) => c.slug === slug)!;
-
-function Basicas() {
-  const row = ["negro", "blanco", "gris", "marino"].map(photo);
-  return (
-    <div className="cat-art cat-basicas" aria-hidden="true">
-      {row.map((c, i) => (
-        <Shirt key={c.slug} color={c.hex} photo={c.image_url} className={`cat-tee t${i}`} />
-      ))}
-    </div>
-  );
-}
-
-function Serigrafia() {
-  return (
-    <svg className="cat-art cat-screen" viewBox="0 0 320 200" aria-hidden="true">
-      <rect x="40" y="34" width="240" height="140" rx="6" fill="#2a2d33" />
-      <rect x="54" y="48" width="212" height="112" fill="#e9edf2" />
-      <path d="M54 48 H266 V160 H54 Z" fill="url(#mallaSeri)" opacity="0.5" />
-      <path d="M70 120 C 120 96, 190 140, 252 108 L 252 160 L 70 160 Z" fill="#ffd23f" />
-      <rect x="98" y="96" width="150" height="16" rx="3" fill="#111" transform="rotate(-8 170 104)" />
-      <rect x="160" y="70" width="26" height="34" rx="4" fill="#3a3d44" transform="rotate(-8 170 104)" />
-      <defs>
-        <pattern id="mallaSeri" width="6" height="6" patternUnits="userSpaceOnUse">
-          <path d="M0 0 H6 M0 0 V6" stroke="#b8c0cc" strokeWidth="0.6" />
-        </pattern>
-      </defs>
-    </svg>
-  );
-}
-
-function Empresas() {
-  const c = photo("negro");
-  return (
-    <div className="cat-art cat-solo" aria-hidden="true">
-      <Shirt color={c.hex} photo={c.image_url} design="volcan" className="cat-tee" />
-    </div>
-  );
-}
-
-function Eventos() {
-  const trio = [
-    { c: photo("negro"), d: "olas" },
-    { c: photo("blanco"), d: "promo" },
-    { c: photo("negro"), d: "maquilishuat" },
-  ];
-  return (
-    <div className="cat-art cat-trio" aria-hidden="true">
-      {trio.map(({ c, d }, i) => (
-        <Shirt key={i} color={c.hex} photo={c.image_url} design={d} className={`cat-tee t${i}`} />
-      ))}
-    </div>
-  );
-}
+/* Fotos de las tarjetas: provisionales, tomadas del diseño de referencia. Reemplazar por fotos reales del taller y clientes. */
+const Photo = (src: string) =>
+  function CardPhoto() {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img className="cat-photo" src={src} alt="" loading="lazy" decoding="async" />;
+  };
+const Basicas = Photo("/inicio/basicas.webp");
+const Serigrafia = Photo("/inicio/serigrafia.webp");
+const Empresas = Photo("/inicio/empresas.webp");
+const Eventos = Photo("/inicio/eventos.webp");
 
 const CATS = [
   { t: "Camisetas básicas", d: "Colores y tallas para todos", href: "/disenar", Art: Basicas },
