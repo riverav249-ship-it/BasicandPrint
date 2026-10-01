@@ -3151,3 +3151,116 @@ body { font-size: 0.94rem; line-height: 1.5; }
 .size-qty { font-size: 0.85rem; }
 .qty-hint { font-size: 0.82rem; margin: 4px 0 0; }
 .add-row { gap: 12px; }
+
+/* ═══════════════ Compacto v2: todo el inicio en una pantalla ═══════════════ */
+body { font-size: 0.875rem; }
+.site-header { padding: 4px clamp(12px, 3vw, 28px); }
+.brand .tee-mark { width: 24px; height: 24px; }
+.brand-name { font-size: 1.02rem; }
+.brand-line { font-size: 0.48rem; }
+.main-nav a { padding: 5px 9px; font-size: 0.8rem; }
+.cart-btn { height: 32px; }
+
+/* portada: franja baja */
+.h-hero { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 12px; padding: 14px clamp(16px, 4vw, 48px) 10px; }
+.h-hero-copy { gap: 8px; max-width: 560px; }
+.h-eyebrow { font-size: 0.62rem; }
+.h-title { font-size: clamp(1.6rem, 2.7vw, 2.35rem); }
+.h-title span { display: inline; }
+.h-lead { font-size: 0.86rem; line-height: 1.45; }
+.h-features li { padding: 0 8px; gap: 6px; font-size: 0.66rem; line-height: 1.25; }
+.h-features svg { width: 18px; height: 18px; }
+.h-cta { padding: 8px 16px; font-size: 0.82rem; }
+.deck { gap: 4px; }
+.deck-stage { width: min(100%, 290px); }
+.deck-btn { width: 26px; height: 26px; }
+.deck-btn svg { width: 13px; height: 13px; }
+.deck-name { font-size: 0.78rem; }
+.deck-link { font-size: 0.72rem; }
+.deck-note { font-size: 0.95rem; top: 40%; }
+.deck-arrow { width: 26px; }
+
+/* Hazla única: una sola fila baja */
+.h-make { grid-template-columns: minmax(0, 0.75fr) minmax(0, 2.25fr); gap: 20px; padding: 16px clamp(16px, 4vw, 48px); }
+.h-make-copy { gap: 6px; }
+.h-eyebrow.dark { font-size: 0.6rem; }
+.h-make h2 { font-size: clamp(1.25rem, 1.9vw, 1.6rem); }
+.h-make-copy > p { font-size: 0.8rem; line-height: 1.4; }
+.h-checks { gap: 3px; font-size: 0.78rem; }
+.h-checks svg { width: 14px; height: 14px; }
+.h-cta-outline { padding: 6px 14px; font-size: 0.78rem; border-width: 1.5px; }
+.qd { gap: 10px; grid-template-columns: auto minmax(0, 1fr) minmax(190px, 220px); }
+.qd-tools { padding: 4px; }
+.qd-tool { padding: 6px 4px; font-size: 0.62rem; }
+.qd-tool svg { width: 16px; height: 16px; }
+.qd-canvas { padding: 8px; gap: 6px; flex-direction: row; align-items: center; justify-content: center; }
+.qd-shirt { width: min(100%, 190px); flex: none; }
+.qd-panel { min-height: 0; width: auto; flex: 1; min-width: 0; max-width: 220px; }
+.qd-designs { flex-wrap: wrap; overflow: visible; gap: 5px; }
+.qd-designs button { width: 38px; height: 38px; padding: 3px; border-width: 1.5px; }
+.qd-field { font-size: 0.75rem; }
+.qd-field input { padding: 7px 10px; font-size: 0.85rem; }
+.qd-card { padding: 10px; gap: 6px; }
+.qd-card h3 { font-size: 0.74rem; }
+.qd-swatch { width: 20px; height: 20px; }
+.qd-swatches { gap: 5px; }
+.qd-size { min-width: 30px; height: 26px; font-size: 0.72rem; }
+.qd-price { padding: 5px 8px; }
+.qd-price strong { font-size: 1.05rem; }
+.qd-price span, .qd-pack { font-size: 0.68rem; }
+.qd-add { height: 34px; font-size: 0.82rem; }
+.qd-ship, .qd-more { font-size: 0.66rem; gap: 6px; }
+.qd-ship svg { width: 15px; height: 15px; }
+.qd-hint, .qd-err { font-size: 0.72rem; }
+
+/* tarjetas: franja baja */
+.h-cats { gap: 10px; padding: 12px clamp(16px, 4vw, 48px); background: linear-gradient(#0e1a2b 0 4px, var(--light-bg) 4px); }
+.cat-card { aspect-ratio: 2.7 / 1; border-radius: 10px; }
+.cat-text strong { font-size: 0.84rem; }
+.cat-text span { font-size: 0.68rem; }
+.cat-go { width: 24px; height: 24px; }
+
+/* pie en una línea */
+.site-footer { padding: 10px clamp(16px, 4vw, 48px); gap: 4px 20px; }
+.footer-tag { font-size: 0.64rem; }
+.footer-fine { font-size: 0.64rem; }
+.footer-wa { font-size: 0.72rem; }
+.footer-social a { width: 30px; height: 30px; }
+.wa-float { width: 42px; height: 42px; }
+
+@media (max-width: 860px) {
+  .h-hero { grid-template-columns: 1fr; }
+  .h-make { grid-template-columns: 1fr; }
+  .deck-stage { width: min(100%, 260px); }
+  .h-title span { display: block; }
+}
+@media (max-width: 720px) {
+  .qd { grid-template-columns: 1fr; }
+  .qd-canvas { flex-direction: column; }
+  .qd-panel { max-width: none; width: 100%; }
+}
+/* compacto v3: quitar huecos */
+.h-hero { padding: 10px clamp(16px, 4vw, 48px) 8px; }
+.deck-stage { width: min(100%, 250px); }
+.deck-controls { margin-top: -6px; }
+.deck-link { margin-top: -2px; }
+.h-hero::after { display: none; }
+.qd { grid-template-columns: auto minmax(0, 1fr) minmax(220px, 240px); align-items: stretch; }
+.qd-canvas { padding: 6px 10px; }
+.qd-shirt { width: min(100%, 175px); }
+.qd-sizes { flex-wrap: nowrap; gap: 4px; }
+.qd-size { min-width: 0; flex: 1; padding: 0 2px; height: 26px; }
+.qd-card { gap: 5px; padding: 10px 12px; }
+.qd-card h3 + .qd-swatches, .qd-card h3 + .qd-sizes { margin-top: -2px; }
+.qd-ship { line-height: 1.3; }
+.h-make { padding: 12px clamp(16px, 4vw, 48px); align-items: center; }
+.h-checks { font-size: 0.75rem; }
+.cat-card { aspect-ratio: 3.3 / 1; }
+.cat-text { bottom: 8px; }
+.cat-go { bottom: 9px; }
+.site-footer { grid-template-columns: auto 1fr auto auto; padding: 8px clamp(16px, 4vw, 48px); }
+.site-footer .footer-fine { grid-column: auto; order: 3; text-align: right; max-width: 30ch; }
+@media (max-width: 1100px) { .site-footer { grid-template-columns: auto 1fr auto; } .site-footer .footer-fine { grid-column: 1 / -1; text-align: left; max-width: none; } }
+@media (max-width: 860px) { .site-footer { grid-template-columns: 1fr; } .site-footer .footer-fine { text-align: center; } }
+.builder-deck .deck-stage { width: min(100%, 360px); }
+@media (max-width: 860px) { .builder-deck { padding: 10px 16px; } .builder-deck .deck-stage { width: min(100%, 250px); } }
