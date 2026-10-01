@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import Shirt from "@/components/Shirt";
+import { luminance } from "@/lib/designs";
 import { useShirtColors } from "@/lib/useCatalog";
 
 const VISIBLE = 5; // camisetas visibles en el abanico
@@ -31,6 +32,7 @@ export default function HeroCarousel() {
   return (
     <div
       className="deck"
+      data-stage={current && luminance(current.hex) < 0.12 ? "claro" : "oscuro"}
       onMouseEnter={() => setHold(true)}
       onMouseLeave={() => setHold(false)}
       onFocus={() => setHold(true)}
