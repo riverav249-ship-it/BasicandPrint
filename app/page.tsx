@@ -1,70 +1,168 @@
 import Link from "next/link";
-import Builder from "@/components/Builder";
-import RegMark from "@/components/RegMark";
+import { ArrowRight, Check, Droplet, PenLine, Shirt as ShirtIcon, Truck } from "lucide-react";
+import Shirt from "@/components/Shirt";
+import HeroCarousel from "@/components/home/HeroCarousel";
+import QuickDesigner from "@/components/home/QuickDesigner";
+import { FALLBACK_COLORS, whatsappLink } from "@/lib/constants";
 
-const FOR_WHO = [
-  { t: "Para ti o para regalar", d: "Una sola camiseta con el diseño que te gusta, o una sorpresa para alguien especial." },
-  { t: "Empresas y uniformes", d: "Tu logo impreso igual en todas las camisetas de tu equipo." },
-  { t: "Colegios y promociones", d: "Graduaciones, promociones y eventos con diseño propio." },
-  { t: "Grupos y eventos", d: "Familias, iglesias, equipos deportivos y excursiones." },
+const FEATURES = [
+  { Icon: ShirtIcon, t: "Camisetas básicas de calidad" },
+  { Icon: PenLine, t: "Diseña o sube tu propio diseño" },
+  { Icon: Droplet, t: "Prueba con varios colores de camisa" },
+  { Icon: Truck, t: "Envíos a todo El Salvador" },
 ];
 
-const STEPS = [
-  { t: "Eliges", d: "Color, diseño, talla y cantidad aquí mismo." },
-  { t: "Confirmamos", d: "Te escribimos por WhatsApp con precio y fecha." },
-  { t: "Quemamos la pantalla", d: "Preparamos un marco por cada tinta de tu diseño." },
-  { t: "Imprimimos", d: "Tinta por tinta, con el rasero, y curamos al calor." },
+const CHECKS = [
+  "Sube tu propio diseño",
+  "Elige el color y la talla de tu camiseta",
+  "Añade texto, imágenes o logotipos",
+  "Mira el resultado antes de imprimir",
+];
+
+const photo = (slug: string) => FALLBACK_COLORS.find((c) => c.slug === slug)!;
+
+function Basicas() {
+  const row = ["negro", "blanco", "gris", "marino"].map(photo);
+  return (
+    <div className="cat-art cat-basicas" aria-hidden="true">
+      {row.map((c, i) => (
+        <Shirt key={c.slug} color={c.hex} photo={c.image_url} className={`cat-tee t${i}`} />
+      ))}
+    </div>
+  );
+}
+
+function Serigrafia() {
+  return (
+    <svg className="cat-art cat-screen" viewBox="0 0 320 200" aria-hidden="true">
+      <rect x="40" y="34" width="240" height="140" rx="6" fill="#2a2d33" />
+      <rect x="54" y="48" width="212" height="112" fill="#e9edf2" />
+      <path d="M54 48 H266 V160 H54 Z" fill="url(#mallaSeri)" opacity="0.5" />
+      <path d="M70 120 C 120 96, 190 140, 252 108 L 252 160 L 70 160 Z" fill="#ffd23f" />
+      <rect x="98" y="96" width="150" height="16" rx="3" fill="#111" transform="rotate(-8 170 104)" />
+      <rect x="160" y="70" width="26" height="34" rx="4" fill="#3a3d44" transform="rotate(-8 170 104)" />
+      <defs>
+        <pattern id="mallaSeri" width="6" height="6" patternUnits="userSpaceOnUse">
+          <path d="M0 0 H6 M0 0 V6" stroke="#b8c0cc" strokeWidth="0.6" />
+        </pattern>
+      </defs>
+    </svg>
+  );
+}
+
+function Empresas() {
+  const c = photo("negro");
+  return (
+    <div className="cat-art cat-solo" aria-hidden="true">
+      <Shirt color={c.hex} photo={c.image_url} design="volcan" className="cat-tee" />
+    </div>
+  );
+}
+
+function Eventos() {
+  const trio = [
+    { c: photo("negro"), d: "olas" },
+    { c: photo("blanco"), d: "promo" },
+    { c: photo("negro"), d: "maquilishuat" },
+  ];
+  return (
+    <div className="cat-art cat-trio" aria-hidden="true">
+      {trio.map(({ c, d }, i) => (
+        <Shirt key={i} color={c.hex} photo={c.image_url} design={d} className={`cat-tee t${i}`} />
+      ))}
+    </div>
+  );
+}
+
+const CATS = [
+  { t: "Camisetas básicas", d: "Colores y tallas para todos", href: "/disenar", Art: Basicas },
+  { t: "Serigrafía", d: "Diseños que perduran", href: "/historia", Art: Serigrafia },
+  {
+    t: "Para empresas",
+    d: "Uniformes y promociones",
+    href: whatsappLink("Hola Basic&Print, quiero cotizar camisetas con el logo de mi empresa."),
+    Art: Empresas,
+    external: true,
+  },
+  {
+    t: "Para eventos",
+    d: "Cumpleaños, graduaciones y más",
+    href: whatsappLink("Hola Basic&Print, quiero cotizar camisetas para un evento."),
+    Art: Eventos,
+    external: true,
+  },
 ];
 
 export default function Home() {
   return (
     <>
-      <Builder />
-
-      <section className="band for-who" aria-labelledby="para-quien">
-        <h2 id="para-quien" className="band-title">
-          Imprimimos para
-        </h2>
-        <ul className="who-list">
-          {FOR_WHO.map((w) => (
-            <li key={w.t}>
-              <h3>{w.t}</h3>
-              <p>{w.d}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="band process" aria-labelledby="como">
-        <h2 id="como" className="band-title">
-          Del pedido a tu camiseta
-        </h2>
-        <ol className="process-line">
-          {STEPS.map((s) => (
-            <li key={s.t}>
-              <RegMark />
-              <h3>{s.t}</h3>
-              <p>{s.d}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="band invite" aria-labelledby="invita">
-        <div>
-          <h2 id="invita" className="band-title">
-            ¿Tienes una idea de diseño?
-          </h2>
-          <p>Compártela en la comunidad, recibe votos de otros clientes y mantén tu racha para ganar premios.</p>
-        </div>
-        <div className="invite-actions">
-          <Link className="squeegee" href="/comunidad">
-            <span>Ir a la comunidad</span>
-          </Link>
-          <Link className="text-link" href="/promociones">
-            Ver promos y rachas
+      <section className="h-hero" aria-labelledby="h-titulo">
+        <div className="h-hero-copy">
+          <p className="h-eyebrow">Camisetas básicas y personalizadas</p>
+          <h1 id="h-titulo" className="h-title">
+            Tu idea,
+            <span>en una camiseta</span>
+          </h1>
+          <p className="h-lead">
+            En nuestra tienda puedes <strong>comprar camisetas básicas</strong> de buena calidad o personalizarlas con el diseño que
+            quieras. Tú imaginas, nosotros lo imprimimos.
+          </p>
+          <ul className="h-features">
+            {FEATURES.map(({ Icon, t }) => (
+              <li key={t}>
+                <Icon aria-hidden="true" />
+                <span>{t}</span>
+              </li>
+            ))}
+          </ul>
+          <Link className="h-cta" href="/disenar">
+            Diseña tu camisa ahora <ArrowRight aria-hidden="true" />
           </Link>
         </div>
+        <HeroCarousel />
+      </section>
+
+      <section className="h-make" aria-labelledby="h-unica">
+        <div className="h-make-copy">
+          <p className="h-eyebrow dark">Diseña tu camisa en línea</p>
+          <h2 id="h-unica">Hazla única</h2>
+          <p>
+            Personaliza tu camiseta aquí mismo: sube tu imagen, escribe tu frase o elige un diseño, cambia el color y mira el
+            resultado al instante.
+          </p>
+          <ul className="h-checks">
+            {CHECKS.map((c) => (
+              <li key={c}>
+                <Check aria-hidden="true" />
+                {c}
+              </li>
+            ))}
+          </ul>
+          <Link className="h-cta-outline" href="/disenar">
+            Comienza a diseñar <ArrowRight aria-hidden="true" />
+          </Link>
+        </div>
+        <QuickDesigner />
+      </section>
+
+      <section className="h-cats" aria-label="Lo que hacemos">
+        {CATS.map(({ t, d, href, Art, external }) => (
+          <Link
+            key={t}
+            href={href}
+            className="cat-card"
+            {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          >
+            <Art />
+            <span className="cat-text">
+              <strong>{t}</strong>
+              <span>{d}</span>
+            </span>
+            <span className="cat-go" aria-hidden="true">
+              <ArrowRight />
+            </span>
+          </Link>
+        ))}
       </section>
     </>
   );

@@ -59,6 +59,8 @@ type Props = {
   color: string;
   /** Foto real de la camiseta (vista frontal, fondo transparente). */
   photo?: string | null;
+  /** Arte propio dibujado en un lienzo de 200×200 (por ejemplo, texto escrito por el cliente). */
+  art?: React.ReactNode;
   design?: string | null;
   designImage?: string | null;
   logoUrl?: string | null;
@@ -74,14 +76,16 @@ const PHOTO = { x: 0, y: 12, width: 300, height: 312.5 };
 /* Mapa de sombras compartido por todas las fotos (mismo molde): oscurece la tinta en los pliegues. */
 const SHADE = "/catalogo/camisetas/sombra.webp";
 
-function PhotoShirt({ photo, design, designImage, logoUrl, placement = "frente", inkKey, className, title, animate, color }: Props & { photo: string }) {
+function PhotoShirt({ photo, art, design, designImage, logoUrl, placement = "frente", inkKey, className, title, animate, color }: Props & { photo: string }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const img = logoUrl || designImage;
   const box = BOX[placement];
   const inks = inksFor(color);
-  const hasPrint = Boolean(design || img);
+  const hasPrint = Boolean(art || design || img);
   const printArt = hasPrint ? (
-    img ? (
+    art ? (
+      <g transform={`translate(${box.x} ${box.y}) scale(${box.s / 200})`}>{art}</g>
+    ) : img ? (
       <image href={img} x={box.x} y={box.y} width={box.s} height={box.s} preserveAspectRatio="xMidYMid meet" />
     ) : (
       <g transform={`translate(${box.x} ${box.y}) scale(${box.s / 200})`}>

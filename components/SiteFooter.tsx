@@ -1,30 +1,25 @@
 "use client";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import RegMark from "./RegMark";
+import Logo from "./Logo";
 import SocialLinks, { WhatsAppFloat } from "./SocialLinks";
+import { WHATSAPP } from "@/lib/supabase";
 
 export default function SiteFooter() {
   const path = usePathname();
   if (path.startsWith("/admin")) return null;
+  const wa = WHATSAPP.replace(/^503(\d{4})(\d{4})$/, "+503 $1 $2");
   return (
     <>
       <footer className="site-footer">
-        <div className="footer-mark">
-          <RegMark />
-          <p>
-            Basic<em>&amp;</em>Print
-          </p>
+        <Logo small />
+        <p className="footer-tag">
+          Tu idea <span aria-hidden="true">•</span> Nuestra impresión
+        </p>
+        <div className="footer-contact">
+          <SocialLinks className="footer-social" />
+          {WHATSAPP && <span className="footer-wa">WhatsApp {wa}</span>}
         </div>
-        <p className="footer-line">Serigrafía en camisetas · El Salvador</p>
-        <nav aria-label="Pie de página">
-          <Link href="/historia">Nosotros</Link>
-          <Link href="/comunidad">Comunidad</Link>
-          <Link href="/promociones">Promos y rachas</Link>
-          <Link href="/contacto">Contacto</Link>
-        </nav>
-        <SocialLinks className="footer-social" />
-        <p className="footer-fine">Los diseños y premios marcados como “ejemplo” son muestras del sitio.</p>
+        <p className="footer-fine">Serigrafía en camisetas · El Salvador. Los diseños marcados como “ejemplo” son muestras.</p>
       </footer>
       <WhatsAppFloat />
     </>
