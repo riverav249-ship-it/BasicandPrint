@@ -18,7 +18,7 @@ export function supabase(): SupabaseClient {
   return client;
 }
 
-export type ShirtColor = { slug: string; name: string; hex: string };
+export type ShirtColor = { slug: string; name: string; hex: string; image_url?: string | null };
 export type Design = {
   slug: string;
   name: string;
@@ -29,14 +29,16 @@ export type Design = {
 };
 
 export const FALLBACK_COLORS: ShirtColor[] = [
-  { slug: "blanco", name: "Blanco", hex: "#F4F4F2" },
-  { slug: "negro", name: "Negro", hex: "#1A1A1C" },
-  { slug: "marino", name: "Azul marino", hex: "#1E2A4A" },
-  { slug: "rojo", name: "Rojo", hex: "#C62A2F" },
-  { slug: "royal", name: "Azul royal", hex: "#2450B8" },
-  { slug: "verde", name: "Verde bosque", hex: "#1F5A3C" },
-  { slug: "amarillo", name: "Amarillo", hex: "#F2C230" },
-  { slug: "gris", name: "Gris jaspe", hex: "#9A9CA0" },
+  { slug: "blanco", name: "Blanco", hex: "#F2F2EF", image_url: "/catalogo/camisetas/blanco.webp" },
+  { slug: "negro", name: "Negro", hex: "#131416", image_url: "/catalogo/camisetas/negro.webp" },
+  { slug: "marino", name: "Azul marino", hex: "#2B364A", image_url: "/catalogo/camisetas/marino.webp" },
+  { slug: "rojo", name: "Rojo", hex: "#B91A26", image_url: "/catalogo/camisetas/rojo.webp" },
+  { slug: "royal", name: "Azul royal", hex: "#2158B5", image_url: "/catalogo/camisetas/royal.webp" },
+  { slug: "verde-olivo", name: "Verde olivo", hex: "#777949", image_url: "/catalogo/camisetas/verde-olivo.webp" },
+  { slug: "amarillo", name: "Amarillo", hex: "#F2C230", image_url: "/catalogo/camisetas/amarillo.webp" },
+  { slug: "gris", name: "Gris jaspe", hex: "#989693", image_url: "/catalogo/camisetas/gris.webp" },
+  { slug: "morado", name: "Morado", hex: "#7C509E", image_url: "/catalogo/camisetas/morado.webp" },
+  { slug: "rosado", name: "Rosado", hex: "#F0CBC3", image_url: "/catalogo/camisetas/rosado.webp" },
 ];
 
 export const FALLBACK_DESIGNS: Design[] = [

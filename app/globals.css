@@ -9,23 +9,24 @@
 }
 :root,
 [data-theme="informal"] {
-  /* Informal: taller celeste y azul */
-  --bg: #9fdcff;
-  --bg-2: #c4e9ff;
-  --fg: #0a1a3d;
-  --fg-2: #1f3c78;
-  --line: rgba(10, 26, 61, 0.2);
-  --accent: #1d4fe0;
-  --accent-fg: #ffffff;
-  --accent-2: #0a1a3d;
-  --ink-field: #0b2360;
-  --ink-field-fg: #e3f4ff;
-  --panel-accent: #6cd0ff;
-  --panel-accent-fg: #0a1a3d;
-  --blade: #0a1a3d;
-  --frame: #0a1a3d;
+  /* Estilo único "Taller de noche": fondo de tinta y acentos CMYK de imprenta */
+  --bg: #0e1020;
+  --bg-2: #181b33;
+  --fg: #f2f1ec;
+  --fg-2: #a3a7c7;
+  --line: rgba(242, 241, 236, 0.14);
+  --accent: #22c3f0;
+  --accent-fg: #0e1020;
+  --accent-2: #ff3d8b;
+  --accent-3: #ffd23f;
+  --ink-field: #181b33;
+  --ink-field-fg: #f2f1ec;
+  --panel-accent: #22c3f0;
+  --panel-accent-fg: #0e1020;
+  --blade: #f2f1ec;
+  --frame: #f2f1ec;
   --mesh: #f3f7fa;
-  --bed: #6ec3f4;
+  --bed: #22264a;
   --bed-rings: 1;
   --display: var(--f-informal), "Arial Narrow", sans-serif;
   --display-weight: 900;
@@ -34,9 +35,24 @@
   --display-lh: 0.88;
   --radius: 6px;
   --radius-lg: 10px;
-  --shadow: 0 12px 26px -14px rgba(10, 30, 80, 0.5);
+  --shadow: 0 14px 30px -16px rgba(0, 0, 0, 0.7);
   --font-display: var(--display);
+  color-scheme: dark;
+}
+
+/* Escenario claro: cuando la camiseta es oscura, el fondo del carrusel se aclara para que resalte */
+.press {
+  transition: background-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.6s;
+}
+.press[data-stage="claro"] {
+  --fg: #0e1020;
+  --fg-2: #4a4f70;
+  --line: rgba(14, 16, 32, 0.16);
+  --bed: #c9d1e6;
+  --bg: #f7f8fc;
   color-scheme: light;
+  color: var(--fg);
+  background: radial-gradient(120% 90% at 50% 20%, #f7f8fc 0%, #d9e0f0 75%);
 }
 
 [data-theme="formal"] {
@@ -457,9 +473,11 @@ svg {
   width: 40px;
   height: 40px;
 }
-.round-btn:hover:not(:disabled) {
-  background: var(--fg);
-  color: var(--bg);
+@media (hover: hover) {
+  .round-btn:hover:not(:disabled) {
+    background: var(--fg);
+    color: var(--bg);
+  }
 }
 .round-btn:active:not(:disabled) {
   transform: scale(0.92);

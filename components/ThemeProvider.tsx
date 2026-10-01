@@ -17,8 +17,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const current = document.documentElement.dataset.theme;
-    if (current === "formal" || current === "informal") setThemeState(current);
-    else document.documentElement.dataset.theme = "informal";
+    if (current !== "informal") document.documentElement.dataset.theme = "informal";
   }, []);
 
   const setTheme = useCallback((t: Theme) => {
@@ -37,4 +36,5 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 export const useTheme = () => useContext(Ctx);
 
-export const themeBootScript = `try{var t=localStorage.getItem('bp-theme');if(t==='formal'||t==='informal')document.documentElement.dataset.theme=t;}catch(e){}`;
+// Estilo único: se ignora cualquier estilo guardado antes (formal/informal).
+export const themeBootScript = `document.documentElement.dataset.theme='informal';`;

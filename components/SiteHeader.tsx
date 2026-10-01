@@ -3,7 +3,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShoppingBag } from "lucide-react";
 import RegMark from "./RegMark";
-import { THEMES, useTheme } from "./ThemeProvider";
 import { useCart } from "@/lib/cart";
 
 const NAV = [
@@ -16,7 +15,6 @@ const NAV = [
 
 export default function SiteHeader() {
   const path = usePathname();
-  const { theme, setTheme } = useTheme();
   const { count, setOpen } = useCart();
   if (path.startsWith("/admin")) return null;
   return (
@@ -35,21 +33,6 @@ export default function SiteHeader() {
         ))}
       </nav>
       <div className="header-tools">
-        <div className="style-switch" role="radiogroup" aria-label="Estilo de la página">
-          {THEMES.map((t) => (
-            <button
-              key={t.id}
-              role="radio"
-              aria-checked={theme === t.id}
-              className={`swatch swatch-${t.id}`}
-              onClick={() => setTheme(t.id)}
-              title={t.hint}
-            >
-              <span className="chip" aria-hidden="true" />
-              {t.label}
-            </button>
-          ))}
-        </div>
         <button className="cart-btn" onClick={() => setOpen(true)} aria-label={`Abrir carrito, ${count} camisetas`}>
           <ShoppingBag aria-hidden="true" />
           <span className="cart-label">Carrito</span>

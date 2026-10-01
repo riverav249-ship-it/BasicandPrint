@@ -1,4 +1,5 @@
 "use client";
+import { useId } from "react";
 import { DesignArt, inksFor, luminance } from "@/lib/designs";
 
 /* Silueta de camiseta de cuello redondo, con dobladillo curvo */
@@ -56,6 +57,8 @@ const BOX: Record<Placement, { x: number; y: number; s: number }> = {
 
 type Props = {
   color: string;
+  /** Foto real de la camiseta (vista frontal, fondo transparente). */
+  photo?: string | null;
   design?: string | null;
   designImage?: string | null;
   logoUrl?: string | null;
@@ -66,8 +69,62 @@ type Props = {
   animate?: boolean;
 };
 
+/* La foto ocupa 300×312.5 dentro del lienzo 300×340 (fotos de 720×750). */
+const PHOTO = { x: 0, y: 12, width: 300, height: 312.5 };
+/* Mapa de sombras compartido por todas las fotos (mismo molde): oscurece la tinta en los pliegues. */
+const SHADE = "/catalogo/camisetas/sombra.webp";
+
+function PhotoShirt({ photo, design, designImage, logoUrl, placement = "frente", inkKey, className, title, animate, color }: Props & { photo: string }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const img = logoUrl || designImage;
+  const box = BOX[placement];
+  const inks = inksFor(color);
+  const hasPrint = Boolean(design || img);
+  const printArt = hasPrint ? (
+    img ? (
+      <image href={img} x={box.x} y={box.y} width={box.s} height={box.s} preserveAspectRatio="xMidYMid meet" />
+    ) : (
+      <g transform={`translate(${box.x} ${box.y}) scale(${box.s / 200})`}>
+        <DesignArt slug={design!} inks={inks} />
+      </g>
+    )
+  ) : null;
+
+  return (
+    <svg viewBox="0 0 300 340" className={className} role="img" aria-label={title}>
+      <defs>
+        {/* silueta de la camiseta: la tinta no sale de la tela */}
+        <mask id={`ps-${uid}`} maskUnits="userSpaceOnUse" x="0" y="0" width="300" height="340" style={{ maskType: "alpha" }}>
+          <image href={photo} {...PHOTO} />
+        </mask>
+        {/* forma de la tinta: los pliegues solo se aplican donde hay impresión */}
+        <mask id={`pi-${uid}`} maskUnits="userSpaceOnUse" x="0" y="0" width="300" height="340" style={{ maskType: "alpha" }}>
+          {printArt}
+        </mask>
+      </defs>
+      <image href={photo} {...PHOTO} />
+      {hasPrint && (
+        <g mask={`url(#ps-${uid})`}>
+          <g key={`${design}-${img}-${placement}-${inkKey ?? ""}`} className={animate ? "ink-pull" : undefined}>
+            <g filter="url(#bp-print)">{printArt}</g>
+            <g mask={`url(#pi-${uid})`} style={{ mixBlendMode: "multiply" }}>
+              <image href={SHADE} {...PHOTO} />
+            </g>
+          </g>
+        </g>
+      )}
+    </svg>
+  );
+}
+
 /** Camiseta con sombreado de pliegues, textura de tejido y la impresión debajo de los pliegues. */
-export default function Shirt({
+export default function Shirt(props: Props) {
+  // Con foto real se usa la foto (vista frontal). La espalda aún usa el dibujo hasta tener fotos de espalda.
+  if (props.photo && props.placement !== "espalda") return <PhotoShirt {...props} photo={props.photo} />;
+  return <DrawnShirt {...props} />;
+}
+
+function DrawnShirt({
   color,
   design,
   designImage,

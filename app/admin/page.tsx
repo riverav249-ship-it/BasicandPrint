@@ -486,12 +486,24 @@ export default function Admin() {
               <>
                 <CrudTable
                   title="Colores de camiseta"
-                  help="Los colores activos aparecen en la prensa, en el orden indicado."
+                  help="Los colores activos aparecen en el carrusel, en el orden indicado. Sube una foto de frente en PNG o WEBP sin fondo, con el mismo encuadre que las demás."
                   table="shirt_colors"
                   keyField="slug"
-                  newRow={{ name: "", hex: "#FFFFFF", sort: 99, active: true }}
+                  newRow={{ name: "", hex: "#FFFFFF", sort: 99, active: true, image_url: null }}
                   beforeInsert={(r) => ({ ...r, slug: slugify(String(r.name || "color")) })}
-                  preview={(r) => <Shirt color={String(r.hex || "#ffffff")} className="adm-mini" />}
+                  preview={(r) => (
+                    <Shirt color={String(r.hex || "#ffffff")} photo={(r.image_url as string) || null} className="adm-mini" />
+                  )}
+                  extra={(r, patch) => (
+                    <div className="adm-extra">
+                      <ImageUpload bucket="productos" onUploaded={(url) => patch({ image_url: url })} label={r.image_url ? "Cambiar foto" : "Subir foto"} />
+                      {Boolean(r.image_url) && (
+                        <button type="button" className="text-link" onClick={() => patch({ image_url: null })}>
+                          Quitar foto
+                        </button>
+                      )}
+                    </div>
+                  )}
                   fields={[
                     { key: "name", label: "Nombre" },
                     { key: "hex", label: "Color", type: "color" },

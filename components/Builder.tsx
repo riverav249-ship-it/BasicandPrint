@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Minus, Plus, Upload, X, Check, AlertCircle, ShoppingBag } from "lucide-react";
 import Shirt, { type Placement } from "./Shirt";
-import { DesignArt, inksFor } from "@/lib/designs";
+import { DesignArt, inksFor, luminance } from "@/lib/designs";
 import { FALLBACK_COLORS, FALLBACK_DESIGNS, supabase, type Design, type ShirtColor } from "@/lib/supabase";
 import { useCart } from "@/lib/cart";
 
@@ -66,9 +66,11 @@ function Press({
   };
 
   const active = colors[index];
+  // Camisetas oscuras sobre el fondo oscuro del sitio no se distinguen: el escenario se aclara.
+  const stage = active && luminance(active.hex) < 0.12 ? "claro" : "oscuro";
 
   return (
-    <section className="press" aria-label="Color de camiseta">
+    <section className="press" data-stage={stage} aria-label="Color de camiseta">
       <div
         ref={stageRef}
         className={`press-stage ${drag ? "is-dragging" : ""}`}
@@ -131,6 +133,7 @@ function Press({
               >
                 <Shirt
                   color={c.hex}
+                  photo={c.image_url}
                   design={print.design}
                   designImage={print.designImage}
                   logoUrl={print.logoUrl}
@@ -295,7 +298,7 @@ export default function Builder() {
   const [colors, setColors] = useState<ShirtColor[]>(FALLBACK_COLORS);
   const [designs, setDesigns] = useState<Design[]>(FALLBACK_DESIGNS);
   const [stock, setStock] = useState<Record<string, Record<string, number>>>({});
-  const [ci, setCi] = useState(2);
+  const [ci, setCi] = useState(0);
   const [di, setDi] = useState(0);
   const [pull, setPull] = useState(1);
   const [placement, setPlacement] = useState<Placement>("frente");
@@ -309,7 +312,7 @@ export default function Builder() {
   useEffect(() => {
     const sb = supabase();
     sb.from("shirt_colors")
-      .select("slug,name,hex")
+      .select("slug,name,hex,image_url")
       .eq("active", true)
       .order("sort")
       .then(({ data }) => data?.length && setColors(data));
