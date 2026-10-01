@@ -5,10 +5,21 @@ import Shirt from "./Shirt";
 import { useCart } from "@/lib/cart";
 import { supabase, whatsappLink } from "@/lib/supabase";
 import { useTheme } from "./ThemeProvider";
+import TextArt from "./TextArt";
+import { inksFor } from "@/lib/designs";
+import { FALLBACK_COLORS } from "@/lib/constants";
+import { money, quote } from "@/lib/pricing";
+import { usePrices } from "@/lib/usePrices";
+import { useSettings } from "@/lib/settings";
+
+const photoOf = (slug: string) => FALLBACK_COLORS.find((c) => c.slug === slug)?.image_url ?? null;
 
 export default function CartDrawer() {
   const { lines, count, open, setOpen, setQty, remove, clear } = useCart();
   const { theme } = useTheme();
+  const prices = usePrices();
+  const settings = useSettings();
+  const q = quote(lines, prices);
   const [form, setForm] = useState({ name: "", phone: "", notes: "" });
   const [state, setState] = useState<"idle" | "saving" | "done">("idle");
   const [err, setErr] = useState("");
@@ -31,10 +42,14 @@ export default function CartDrawer() {
   }, [open, setOpen]);
 
   const summary = () => {
-    const rows = lines
-      .map((l) => `• ${l.qty} × ${l.colorName} · ${l.logoUrl ? "Mi logo" : l.designName} · Talla ${l.size}${l.logoUrl ? `\n   Logo: ${l.logoUrl}` : ""}`)
+    const rows = q.rows
+      .map(({ line: l, unit, total }) => {
+        const what = l.logoUrl ? "Mi logo" : l.designName;
+        return `• ${l.qty} × ${l.colorName} · ${what} · Talla ${l.size} · ${money(unit)} c/u = ${money(total)}${l.logoUrl ? `\n   Logo: ${l.logoUrl}` : ""}`;
+      })
       .join("\n");
-    return `Hola Basic&Print, quiero este pedido (${count} camisetas):\n${rows}${form.notes ? `\nNotas: ${form.notes}` : ""}\nNombre: ${form.name}\nTel: ${form.phone}`;
+    const ahorro = q.savings > 0 ? `\nPrecio de paquete aplicado (ahorro ${money(q.savings)})` : "";
+    return `Hola Basic&Print, quiero este pedido (${count} camisetas):\n${rows}\nTotal estimado: ${money(q.total)}${ahorro}${form.notes ? `\nNotas: ${form.notes}` : ""}\nNombre: ${form.name}\nTel: ${form.phone}`;
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -58,17 +73,21 @@ export default function CartDrawer() {
       total_items: count,
       notes: form.notes.trim() || null,
       style: theme,
+      subtotal: Math.round(q.total * 100) / 100,
     });
     const { error: e2 } = error
       ? { error }
       : await sb.from("order_items").insert(
-          lines.map((l) => ({
+          q.rows.map(({ line: l, unit, printed }) => ({
             order_id: orderId,
             shirt_color: l.colorSlug,
             design_slug: l.logoUrl ? "tu-logo" : l.designSlug,
             logo_url: l.logoUrl ?? null,
             size: l.size,
             quantity: l.qty,
+            unit_price: unit,
+            printed,
+            custom_text: l.text?.slice(0, 60) ?? null,
           }))
         );
     setLastLink(link);
@@ -120,13 +139,23 @@ export default function CartDrawer() {
         ) : (
           <form className="cart-body" onSubmit={submit} noValidate>
             <ul className="cart-lines">
-              {lines.map((l) => (
+              {q.rows.map(({ line: l, unit, total }) => (
                 <li key={l.id}>
-                  <Shirt color={l.hex} design={l.designSlug} logoUrl={l.logoUrl} className="cart-shirt" />
+                  <Shirt
+                    color={l.hex}
+                    photo={photoOf(l.colorSlug)}
+                    art={l.text ? <TextArt text={l.text} color={inksFor(l.hex).base} /> : undefined}
+                    design={l.text || l.designSlug === "basica" ? null : l.designSlug}
+                    logoUrl={l.logoUrl}
+                    className="cart-shirt"
+                  />
                   <div className="cart-line-info">
                     <p className="cart-line-name">{l.logoUrl ? "Mi logo" : l.designName}</p>
                     <p className="cart-line-meta">
                       {l.colorName} · Talla <strong>{l.size}</strong>
+                    </p>
+                    <p className="cart-line-price">
+                      {money(unit)} c/u · <strong>{money(total)}</strong>
                     </p>
                     <div className="stepper sm">
                       <button type="button" onClick={() => setQty(l.id, l.qty - 1)} aria-label="Menos" disabled={l.qty <= 1}>
@@ -171,7 +200,24 @@ export default function CartDrawer() {
                   placeholder="Nombres en la espalda, fecha que lo necesitas…"
                 />
               </label>
-              <p className="price-note">Te confirmamos precio y tiempo de entrega por WhatsApp.</p>
+              <div className="cart-total" aria-live="polite">
+                <p>
+                  <span>Total estimado</span>
+                  <strong>{money(q.total)}</strong>
+                </p>
+                {q.savings > 0 && <p className="cart-save">Precio de paquete aplicado: ahorras {money(q.savings)}</p>}
+                {q.missingPrinted > 0 && (
+                  <p className="cart-tip">
+                    Agrega {q.missingPrinted} con serigrafía más y pagas {money(prices.printPack)} c/u en vez de {money(prices.print)}.
+                  </p>
+                )}
+                {q.missingBasic > 0 && (
+                  <p className="cart-tip">
+                    Agrega {q.missingBasic} básica{q.missingBasic > 1 ? "s" : ""} más y pagas {money(prices.basicPack)} c/u en vez de {money(prices.basic)}.
+                  </p>
+                )}
+              </div>
+              <p className="price-note">{settings.price_note || "Te confirmamos fecha de entrega por WhatsApp."}</p>
               {err && (
                 <p className="form-error" role="alert">
                   <AlertCircle aria-hidden="true" /> {err}{" "}

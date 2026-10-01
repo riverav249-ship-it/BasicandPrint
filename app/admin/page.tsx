@@ -24,13 +24,23 @@ const TABS = [
   { id: "disenos", l: "Diseños" },
   { id: "promos", l: "Promociones" },
   { id: "retos", l: "Retos" },
-  { id: "ajustes", l: "Redes y ajustes" },
+  { id: "ajustes", l: "Precios y ajustes" },
   { id: "mensajes", l: "Mensajes" },
   { id: "equipo", l: "Equipo" },
 ] as const;
 type Tab = (typeof TABS)[number]["id"];
 
-type Item = { id: string; shirt_color: string; design_slug: string; logo_url: string | null; size: string; quantity: number };
+type Item = {
+  id: string;
+  shirt_color: string;
+  design_slug: string;
+  logo_url: string | null;
+  size: string;
+  quantity: number;
+  unit_price?: number | null;
+  custom_text?: string | null;
+  printed?: boolean;
+};
 type Order = {
   id: string;
   created_at: string;
@@ -40,6 +50,7 @@ type Order = {
   status: string;
   admin_note: string | null;
   total_items: number | null;
+  subtotal?: number | null;
   quantity: number;
   shirt_color: string | null;
   design_slug: string | null;
@@ -121,6 +132,7 @@ function Orders() {
                   <h3>{o.customer_name}</h3>
                   <p className="adm-help">
                     {when(o.created_at)} · {total} camisetas ·{" "}
+                    {o.subtotal != null && <strong>${Number(o.subtotal).toFixed(2)} · </strong>}
                     <a href={`https://wa.me/${o.phone.replace(/\D/g, "").replace(/^(\d{8})$/, "503$1")}`} target="_blank" rel="noopener noreferrer">
                       {o.phone}
                     </a>
@@ -139,7 +151,9 @@ function Orders() {
                   <li key={i.id}>
                     <Shirt color={hexOf(i.shirt_color, colors)} design={i.design_slug} logoUrl={i.logo_url} className="adm-mini" />
                     <span>
-                      <strong>{i.quantity}×</strong> {colors.find((c) => c.slug === i.shirt_color)?.name ?? i.shirt_color} · {i.design_slug} · {i.size}
+                      <strong>{i.quantity}×</strong> {colors.find((c) => c.slug === i.shirt_color)?.name ?? i.shirt_color} ·{" "}
+                      {i.printed === false ? "básica" : i.custom_text ? `texto “${i.custom_text}”` : i.design_slug} · {i.size}
+                      {i.unit_price != null && ` · $${Number(i.unit_price).toFixed(2)} c/u`}
                     </span>
                     {i.logo_url && (
                       <a href={i.logo_url} target="_blank" rel="noopener noreferrer" className="text-link">
@@ -265,7 +279,12 @@ function SettingsPanel() {
     { k: "facebook", l: "Facebook (enlace o usuario)", ph: "facebook.com/basicandprint" },
     { k: "instagram", l: "Instagram (usuario)", ph: "@basicandprint" },
     { k: "tiktok", l: "TikTok (usuario)", ph: "@basicandprint" },
-    { k: "price_note", l: "Mensaje sobre precios", ph: "Te confirmamos precio y tiempo de entrega por WhatsApp." },
+    { k: "price_basic", l: "Precio básica (1 a 9), en dólares", ph: "8" },
+    { k: "price_basic_pack", l: "Precio básica en paquete, c/u", ph: "6" },
+    { k: "price_print", l: "Precio con serigrafía (1 a 9)", ph: "12" },
+    { k: "price_print_pack", l: "Precio con serigrafía en paquete, c/u", ph: "10" },
+    { k: "price_pack_min", l: "Cantidad mínima para precio de paquete", ph: "10" },
+    { k: "price_note", l: "Mensaje en el carrito (envíos y entrega)", ph: "Envío a todo El Salvador en pedidos de 10 camisetas o más." },
   ];
   const [vals, setVals] = useState<Record<string, string>>({});
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
@@ -285,8 +304,11 @@ function SettingsPanel() {
     <section className="adm-section">
       <div className="adm-head">
         <div>
-          <h2>Redes y ajustes</h2>
-          <p className="adm-help">Cada red social aparece en el sitio solo cuando tiene enlace. Déjala vacía para ocultarla.</p>
+          <h2>Precios, redes y ajustes</h2>
+          <p className="adm-help">
+            Los precios se aplican en todo el sitio al recargar. Escribe solo el número (ej. 12 o 12.50). Cada red social aparece solo cuando
+            tiene enlace.
+          </p>
         </div>
         <button className="adm-btn" onClick={save}>
           <Save aria-hidden="true" /> Guardar

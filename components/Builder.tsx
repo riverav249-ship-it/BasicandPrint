@@ -5,6 +5,10 @@ import Shirt, { type Placement } from "./Shirt";
 import { DesignArt, inksFor, luminance } from "@/lib/designs";
 import { FALLBACK_COLORS, FALLBACK_DESIGNS, supabase, type Design, type ShirtColor } from "@/lib/supabase";
 import { useCart } from "@/lib/cart";
+import { BASIC_SLUG, money, unitPrice } from "@/lib/pricing";
+import { usePrices } from "@/lib/usePrices";
+
+const BASIC_DESIGN: Design = { slug: BASIC_SLUG, name: "Sin estampado", category: "Básicas", ink_note: null, is_sample: false };
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "Niño"] as const;
 const PLACEMENTS: { id: Placement; label: string }[] = [
@@ -273,7 +277,9 @@ function Screens({
                 }}
               >
                 <span className="mesh">
-                  {img ? (
+                  {d.slug === BASIC_SLUG ? (
+                    <span className="mesh-plain">Lisa</span>
+                  ) : img ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={img} alt="" draggable={false} />
                   ) : (
@@ -296,7 +302,8 @@ function Screens({
 export default function Builder() {
   const { add, setOpen } = useCart();
   const [colors, setColors] = useState<ShirtColor[]>(FALLBACK_COLORS);
-  const [designs, setDesigns] = useState<Design[]>(FALLBACK_DESIGNS);
+  const [designs, setDesigns] = useState<Design[]>([...FALLBACK_DESIGNS, BASIC_DESIGN]);
+  const prices = usePrices();
   const [stock, setStock] = useState<Record<string, Record<string, number>>>({});
   const [ci, setCi] = useState(0);
   const [di, setDi] = useState(0);
@@ -324,7 +331,7 @@ export default function Builder() {
         if (!data?.length) return;
         // "Tu logo aquí" siempre disponible como pantalla para subir el propio logo
         const hasLogo = data.some((d) => d.slug === "tu-logo");
-        setDesigns(hasLogo ? data : [...data, FALLBACK_DESIGNS.find((d) => d.slug === "tu-logo")!]);
+        setDesigns([...(hasLogo ? data : [...data, FALLBACK_DESIGNS.find((d) => d.slug === "tu-logo")!]), BASIC_DESIGN]);
       });
     sb.from("inventory")
       .select("color_slug,size,stock")
@@ -349,6 +356,7 @@ export default function Builder() {
   const color = colors[Math.min(ci, colors.length - 1)];
   const design = designs[Math.min(di, designs.length - 1)];
   const isLogo = design.slug === "tu-logo";
+  const isBasic = design.slug === BASIC_SLUG;
   const colorStock = stock[color.slug];
   const available = (s: string) => (colorStock && s in colorStock ? colorStock[s] : Infinity);
 
@@ -366,7 +374,7 @@ export default function Builder() {
   }, [color.slug, stock]);
 
   const print: Print = {
-    design: design.slug,
+    design: isBasic ? "" : design.slug,
     designImage: isLogo ? null : design.image_url,
     logoUrl: isLogo ? logo?.url ?? logo?.preview ?? null : null,
     placement,
@@ -431,8 +439,9 @@ export default function Builder() {
         colorName: color.name,
         hex: color.hex,
         designSlug: design.slug,
-        designName: `${design.name}${placement !== "frente" ? ` (${placement})` : ""}`,
+        designName: isBasic ? "Básica sin estampado" : `${design.name}${placement !== "frente" ? ` (${placement})` : ""}`,
         logoUrl: isLogo ? logo?.url : null,
+        printed: !isBasic,
         size,
         qty,
       }))
@@ -561,7 +570,14 @@ export default function Builder() {
               );
             })}
           </ul>
-          {total >= 12 && <p className="qty-hint">Pedido de grupo: te cotizamos precio especial.</p>}
+          {total > 0 && (
+            <p className="qty-hint" aria-live="polite">
+              {total} × {money(unitPrice(!isBasic, total, prices))} = <strong>{money(total * unitPrice(!isBasic, total, prices))}</strong>
+              {total < prices.packMin
+                ? ` · desde ${prices.packMin} pagas ${money(isBasic ? prices.basicPack : prices.printPack)} c/u`
+                : " · precio de paquete"}
+            </p>
+          )}
         </div>
 
         <div className="add-row">

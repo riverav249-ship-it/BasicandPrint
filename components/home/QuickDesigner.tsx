@@ -1,8 +1,11 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, Check, ImageUp, LayoutGrid, ShoppingCart, Truck, Type, AlertCircle } from "lucide-react";
+import { ArrowRight, Check, ImageUp, LayoutGrid, ShoppingCart, Truck, Type, AlertCircle, Shirt as ShirtIcon } from "lucide-react";
 import Shirt from "@/components/Shirt";
+import TextArt from "@/components/TextArt";
+import { BASIC_SLUG, money } from "@/lib/pricing";
+import { usePrices } from "@/lib/usePrices";
 import { DesignArt, inksFor } from "@/lib/designs";
 import { useCart } from "@/lib/cart";
 import { FALLBACK_DESIGNS, supabase, type Design } from "@/lib/supabase";
@@ -10,44 +13,12 @@ import { useShirtColors } from "@/lib/useCatalog";
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL"] as const;
 const TYPES = ["image/png", "image/jpeg", "image/svg+xml", "image/webp"];
-type Tool = "texto" | "imagen" | "disenos";
-
-/** Texto del cliente acomodado en hasta 3 líneas dentro del lienzo de 200×200. */
-function TextArt({ text, color }: { text: string; color: string }) {
-  const words = text.trim().toUpperCase().split(/\s+/).filter(Boolean);
-  const lines: string[] = [];
-  for (const w of words) {
-    const last = lines[lines.length - 1];
-    if (last && (last + " " + w).length <= 10 && lines.length) lines[lines.length - 1] = last + " " + w;
-    else lines.push(w);
-  }
-  const shown = lines.slice(0, 3);
-  const longest = Math.max(1, ...shown.map((l) => l.length));
-  const size = Math.min(58, 300 / longest);
-  const top = 100 - ((shown.length - 1) * size * 0.95) / 2 + size * 0.34;
-  return (
-    <g>
-      {shown.map((l, i) => (
-        <text
-          key={i}
-          x="100"
-          y={top + i * size * 0.95}
-          textAnchor="middle"
-          fontFamily="var(--font-display), system-ui, sans-serif"
-          fontWeight="900"
-          fontSize={size}
-          fill={color}
-        >
-          {l}
-        </text>
-      ))}
-    </g>
-  );
-}
+type Tool = "texto" | "imagen" | "disenos" | "basica";
 
 export default function QuickDesigner() {
   const colors = useShirtColors();
   const { add, setOpen } = useCart();
+  const prices = usePrices();
   const [ci, setCi] = useState(1); // negra, como en el diseño de referencia
   const [size, setSize] = useState<string>("M");
   const [tool, setTool] = useState<Tool>("disenos");
@@ -78,6 +49,7 @@ export default function QuickDesigner() {
 
   // Lo que va impreso según la herramienta activa
   const print = useMemo(() => {
+    if (tool === "basica") return { slug: BASIC_SLUG, name: "Básica sin estampado", printed: false };
     if (tool === "texto" && text.trim()) return { art: <TextArt text={text} color={inks.base} />, slug: "texto", name: `Texto: “${text.trim()}”` };
     if (tool === "imagen" && img) return { image: img.url ?? img.preview, slug: "tu-logo", name: "Diseño propio (imagen)", logoUrl: img.url };
     return { design: chosen?.slug, image: chosen?.image_url ?? null, slug: chosen?.slug ?? "", name: chosen?.name ?? "" };
@@ -113,6 +85,8 @@ export default function QuickDesigner() {
         designSlug: print.slug,
         designName: print.name,
         logoUrl: "logoUrl" in print ? print.logoUrl ?? null : null,
+        printed: !("printed" in print && print.printed === false),
+        text: tool === "texto" ? text.trim().slice(0, 30) : null,
         size,
         qty: 1,
       },
@@ -130,6 +104,7 @@ export default function QuickDesigner() {
             ["texto", "Texto", Type],
             ["imagen", "Imagen", ImageUp],
             ["disenos", "Diseños", LayoutGrid],
+            ["basica", "Sin estampado", ShirtIcon],
           ] as const
         ).map(([id, label, Icon]) => (
           <button
@@ -200,6 +175,7 @@ export default function QuickDesigner() {
               </span>
             </div>
           )}
+          {tool === "basica" && <p className="qd-hint">Camiseta lisa, sin estampado. Ideal para uniformes o para regalar.</p>}
           {tool === "disenos" && (
             <ul className="qd-designs" aria-label="Diseños de muestra">
               {designs.map((d) => (
@@ -246,6 +222,15 @@ export default function QuickDesigner() {
               {s}
             </button>
           ))}
+        </div>
+        <div className="qd-price" aria-live="polite">
+          <p>
+            <strong>{money(tool === "basica" ? prices.basic : prices.print)}</strong>
+            <span>{tool === "basica" ? "básica" : "con serigrafía"}</span>
+          </p>
+          <p className="qd-pack">
+            {money(tool === "basica" ? prices.basicPack : prices.printPack)} c/u desde {prices.packMin} camisetas
+          </p>
         </div>
         <button type="button" className="qd-add" onClick={addToCart} disabled={!canAdd}>
           {added ? (

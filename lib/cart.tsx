@@ -9,6 +9,10 @@ export type CartLine = {
   designSlug: string;
   designName: string;
   logoUrl?: string | null;
+  /** false = camiseta básica sin estampado */
+  printed?: boolean;
+  /** frase escrita por el cliente (herramienta Texto) */
+  text?: string | null;
   size: string;
   qty: number;
 };
@@ -27,7 +31,7 @@ type Ctx = {
 const CartCtx = createContext<Ctx | null>(null);
 const KEY = "bp-cart";
 const sameItem = (a: Omit<CartLine, "id">, b: Omit<CartLine, "id">) =>
-  a.colorSlug === b.colorSlug && a.designSlug === b.designSlug && a.size === b.size && (a.logoUrl ?? null) === (b.logoUrl ?? null);
+  a.colorSlug === b.colorSlug && a.designSlug === b.designSlug && a.size === b.size && (a.logoUrl ?? null) === (b.logoUrl ?? null) && (a.text ?? null) === (b.text ?? null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [lines, setLines] = useState<CartLine[]>([]);
