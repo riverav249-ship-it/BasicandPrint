@@ -1,8 +1,9 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Minus, Plus, Upload, X, Check, AlertCircle, ShoppingBag } from "lucide-react";
-import Shirt, { type Placement } from "./Shirt";
-import { DesignArt, inksFor, luminance } from "@/lib/designs";
+import { type Placement } from "./Shirt";
+import ShirtDeck from "./ShirtDeck";
+import { DesignArt, inksFor } from "@/lib/designs";
 import { FALLBACK_COLORS, FALLBACK_DESIGNS, supabase, type Design, type ShirtColor } from "@/lib/supabase";
 import { useCart } from "@/lib/cart";
 import { BASIC_SLUG, money, unitPrice } from "@/lib/pricing";
@@ -20,159 +21,6 @@ const mod = (n: number, m: number) => ((n % m) + m) % m;
 const LOGO_TYPES = ["image/png", "image/jpeg", "image/svg+xml", "image/webp"];
 
 type Print = { design: string; designImage?: string | null; logoUrl?: string | null; placement: Placement };
-
-/* ─────────────── Prensa rotativa (colores) ─────────────── */
-function Press({
-  colors,
-  index,
-  onIndex,
-  print,
-  pull,
-}: {
-  colors: ShirtColor[];
-  index: number;
-  onIndex: (i: number) => void;
-  print: Print;
-  pull: number;
-}) {
-  const n = colors.length;
-  const step = 360 / n;
-  const [rot, setRot] = useState(index * step);
-  const [drag, setDrag] = useState<{ x: number; start: number; moved: boolean } | null>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (drag) return;
-    setRot((r) => {
-      const current = mod(Math.round(r / step), n);
-      if (current === index) return r;
-      let diff = index - current;
-      if (diff > n / 2) diff -= n;
-      if (diff < -n / 2) diff += n;
-      return Math.round(r / step) * step + diff * step;
-    });
-  }, [index, n, step, drag]);
-
-  const go = useCallback(
-    (dir: number) => {
-      setRot((r) => Math.round(r / step) * step + dir * step);
-      onIndex(mod(index + dir, n));
-    },
-    [index, n, onIndex, step]
-  );
-
-  const onPointerUp = () => {
-    if (!drag) return;
-    const snapped = Math.round(rot / step) * step;
-    setRot(snapped);
-    setDrag(null);
-    onIndex(mod(Math.round(snapped / step), n));
-  };
-
-  const active = colors[index];
-  // Camisetas oscuras sobre el fondo oscuro del sitio no se distinguen: el escenario se aclara.
-  const stage = active && luminance(active.hex) < 0.12 ? "claro" : "oscuro";
-
-  return (
-    <section className="press" data-stage={stage} aria-label="Color de camiseta">
-      <div
-        ref={stageRef}
-        className={`press-stage ${drag ? "is-dragging" : ""}`}
-        tabIndex={0}
-        role="listbox"
-        aria-label="Prensa de colores. Usa las flechas para girar."
-        aria-activedescendant={`shirt-${active?.slug}`}
-        onKeyDown={(e) => {
-          if (e.key === "ArrowRight") {
-            e.preventDefault();
-            go(1);
-          }
-          if (e.key === "ArrowLeft") {
-            e.preventDefault();
-            go(-1);
-          }
-        }}
-        onPointerDown={(e) => {
-          (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
-          setDrag({ x: e.clientX, start: rot, moved: false });
-        }}
-        onPointerMove={(e) => {
-          if (!drag) return;
-          const w = stageRef.current?.clientWidth || 600;
-          const dx = e.clientX - drag.x;
-          if (Math.abs(dx) > 5 && !drag.moved) setDrag({ ...drag, moved: true });
-          setRot(drag.start - (dx / w) * 160);
-        }}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
-      >
-        <div className="press-bed" aria-hidden="true">
-          <span className="press-hub" />
-        </div>
-        <div className="press-ring" style={{ transform: `translateZ(calc(var(--r) * -1)) rotateY(${-rot}deg)` }}>
-          {colors.map((c, i) => {
-            const angle = i * step;
-            const dist = Math.min(Math.abs(mod(angle - rot + 180, 360) - 180), 180);
-            const isFront = i === index && !drag;
-            return (
-              <div
-                key={c.slug}
-                id={`shirt-${c.slug}`}
-                role="option"
-                aria-selected={i === index}
-                aria-label={c.name}
-                className={`platen ${isFront ? "is-front" : ""}`}
-                style={{
-                  transform: `rotateY(${angle}deg) translateZ(var(--r))`,
-                  opacity: 1 - (dist / 180) * 0.75,
-                  filter: dist > 60 ? `brightness(${1 - dist / 420})` : undefined,
-                }}
-                onClick={() => {
-                  if (drag?.moved || i === index) return;
-                  let diff = i - index;
-                  if (diff > n / 2) diff -= n;
-                  if (diff < -n / 2) diff += n;
-                  go(diff);
-                }}
-              >
-                <Shirt
-                  color={c.hex}
-                  photo={c.image_url}
-                  design={print.design}
-                  designImage={print.designImage}
-                  logoUrl={print.logoUrl}
-                  placement={print.placement}
-                  inkKey={isFront ? pull : 0}
-                  animate={isFront}
-                  className="platen-shirt"
-                  title={`Camiseta ${c.name}`}
-                />
-                <span className="platen-arm" aria-hidden="true" />
-              </div>
-            );
-          })}
-        </div>
-        <span key={pull} className="squeegee-pass" aria-hidden="true" />
-      </div>
-
-      <div className="press-controls">
-        <button className="round-btn" onClick={() => go(-1)} aria-label="Color anterior">
-          <ChevronLeft aria-hidden="true" />
-        </button>
-        <p className="press-label" aria-live="polite">
-          <span className="ink-dot" style={{ background: active?.hex }} aria-hidden="true" />
-          <span className="press-label-name">{active?.name}</span>
-          <span className="press-label-count">
-            {index + 1}/{n}
-          </span>
-        </p>
-        <button className="round-btn" onClick={() => go(1)} aria-label="Color siguiente">
-          <ChevronRight aria-hidden="true" />
-        </button>
-      </div>
-    </section>
-  );
-}
 
 /* ─────────────── Carrusel de pantallas (diseños) ─────────────── */
 function Screens({
@@ -200,7 +48,7 @@ function Screens({
     return () => ro.disconnect();
   }, []);
 
-  const frame = w < 380 ? 104 : 118;
+  const frame = w < 380 ? 78 : 86;
   const gap = 12;
   const offset = w / 2 - frame / 2 - index * (frame + gap) + dx;
   const inks = inksFor("#EDEDEA");
@@ -457,7 +305,16 @@ export default function Builder() {
 
   return (
     <div className="hero">
-      <Press colors={colors} index={Math.min(ci, colors.length - 1)} onIndex={setCi} print={print} pull={pull} />
+      <section className="builder-deck" aria-label="Color de camiseta">
+        <ShirtDeck
+          colors={colors}
+          index={Math.min(ci, colors.length - 1)}
+          onIndex={setCi}
+          print={{ design: print.design, designImage: print.designImage, logoUrl: print.logoUrl, placement: print.placement }}
+          inkKey={pull}
+          label="Elige el color de tu camiseta"
+        />
+      </section>
       <div className="panel">
         <h1 className="hero-title">
           Tu camiseta,

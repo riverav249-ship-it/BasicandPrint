@@ -3020,3 +3020,134 @@ textarea {
 /* estilo nuevo: botón sin el mango del rasero */
 .squeegee::before { display: none !important; }
 .squeegee { border-radius: 99px; }
+
+/* ═══════════════ Modo compacto (pedido de la dueña: todo más pequeño, más contenido en la primera pantalla) ═══════════════ */
+body { font-size: 0.94rem; line-height: 1.5; }
+
+/* cabecera */
+.site-header { padding: 6px clamp(12px, 3vw, 32px); gap: 16px; }
+.brand { gap: 8px; }
+.brand .tee-mark { width: 28px; height: 28px; }
+.brand-name { font-size: 1.15rem; }
+.brand-line { font-size: 0.52rem; margin-top: 3px; }
+.main-nav a { padding: 6px 10px; font-size: 0.85rem; }
+.main-nav a[aria-current="page"]::after { left: 10px; right: 10px; bottom: 0; }
+.cart-btn { height: 36px; }
+.cart-btn svg { width: 20px; height: 20px; }
+
+/* portada */
+.h-hero { gap: 16px; padding: clamp(20px, 3vw, 36px) clamp(16px, 4vw, 56px) clamp(16px, 2vw, 24px); }
+.h-hero-copy { gap: 12px; max-width: 540px; }
+.h-eyebrow { font-size: 0.68rem; letter-spacing: 0.16em; }
+.h-title { font-size: clamp(1.9rem, 3.6vw, 3.1rem); }
+.h-lead { font-size: 0.95rem; max-width: 48ch; }
+.h-features li { gap: 8px; padding: 2px 10px; font-size: 0.72rem; }
+.h-features svg { width: 22px; height: 22px; }
+.h-cta, .h-cta-outline { padding: 10px 20px; font-size: 0.9rem; gap: 8px; }
+.h-cta svg, .h-cta-outline svg { width: 16px; height: 16px; }
+.deck { gap: 6px; }
+.deck-stage { width: min(100%, 400px); }
+.deck-btn { width: 32px; height: 32px; }
+.deck-btn svg { width: 15px; height: 15px; }
+.deck-name { font-size: 0.88rem; gap: 6px; min-width: 10ch; }
+.deck-dot { width: 11px; height: 11px; }
+.deck-count { font-weight: 500; font-size: 0.75rem; color: var(--fg-2); font-variant-numeric: tabular-nums; }
+.deck-link { font-size: 0.78rem; }
+.deck-note { font-size: 1.15rem; right: 0; }
+.deck-arrow { width: 34px; }
+
+/* Hazla única */
+.h-make { gap: clamp(16px, 3vw, 36px); padding: clamp(24px, 3.5vw, 40px) clamp(16px, 4vw, 56px); }
+.h-make-copy { gap: 10px; }
+.h-make h2 { font-size: clamp(1.5rem, 2.4vw, 2rem); }
+.h-make-copy > p { font-size: 0.9rem; }
+.h-checks { gap: 6px; font-size: 0.88rem; }
+.h-checks svg { width: 16px; height: 16px; }
+.qd { gap: 14px; grid-template-columns: auto minmax(0, 1fr) minmax(200px, 250px); }
+.qd-tools { padding: 6px 4px; gap: 2px; }
+.qd-tool { padding: 8px 6px; gap: 4px; font-size: 0.68rem; }
+.qd-tool svg { width: 19px; height: 19px; }
+.qd-canvas { padding: 12px; gap: 10px; }
+.qd-shirt { width: min(100%, 250px); }
+.qd-panel { min-height: 48px; }
+.qd-field input { padding: 9px 12px; font-size: 0.92rem; }
+.qd-designs button { width: 46px; height: 46px; }
+.qd-card { padding: 14px; gap: 8px; }
+.qd-card h3 { font-size: 0.82rem; }
+.qd-swatches { gap: 7px; }
+.qd-swatch { width: 24px; height: 24px; }
+.qd-sizes { gap: 5px; }
+.qd-size { min-width: 34px; height: 30px; font-size: 0.78rem; }
+.qd-price { padding: 8px 10px; }
+.qd-price strong { font-size: 1.25rem; }
+.qd-price span, .qd-pack { font-size: 0.76rem; }
+.qd-add { height: 40px; font-size: 0.9rem; margin-top: 2px; }
+.qd-add svg { width: 17px; height: 17px; }
+.qd-ship, .qd-more { font-size: 0.74rem; }
+.qd-ship svg { width: 18px; height: 18px; }
+
+/* tarjetas */
+.h-cats { gap: 12px; padding: clamp(16px, 2vw, 22px) clamp(16px, 4vw, 56px); background: linear-gradient(#0e1a2b 0 6px, var(--light-bg) 6px); }
+.cat-card { aspect-ratio: 1.9 / 1; border-radius: 12px; }
+.cat-text { left: 12px; bottom: 10px; right: 48px; }
+.cat-text strong { font-size: 0.95rem; }
+.cat-text span { font-size: 0.74rem; }
+.cat-go { width: 28px; height: 28px; right: 10px; bottom: 12px; border-width: 1.5px; }
+.cat-go svg { width: 13px; height: 13px; }
+
+/* pie */
+.site-footer { padding: 18px clamp(16px, 4vw, 48px); gap: 10px 24px; }
+.footer-tag { font-size: 0.72rem; letter-spacing: 0.26em; }
+.footer-wa { font-size: 0.8rem; }
+.footer-fine { font-size: 0.72rem; }
+.wa-float { width: 46px; height: 46px; }
+
+/* Diseña tu camisa */
+.hero { min-height: 0; grid-template-columns: minmax(0, 1.15fr) minmax(320px, 1fr); }
+.builder-deck { display: flex; align-items: center; justify-content: center; padding: 20px 16px; min-width: 0; background: radial-gradient(90% 100% at 50% 30%, #13284a 0%, #0b1424 70%); }
+.builder-deck .deck-stage { width: min(100%, 440px); }
+.panel { gap: 10px; padding: 18px clamp(16px, 2.4vw, 32px); }
+.hero-title { font-size: clamp(1.4rem, 2.2vw, 1.9rem); }
+.panel-label { font-size: 0.7rem; }
+.screen-frame { --frame: 88px; }
+.frame-name { font-size: 0.72rem; }
+.logo-drop { padding: 10px 12px; font-size: 0.85rem; }
+.size-grid li, .sizes li { padding: 6px; }
+.squeegee { padding: 11px 18px; font-size: 0.92rem; }
+
+/* páginas interiores */
+.band { padding: clamp(28px, 4vw, 56px) clamp(16px, 4vw, 48px); }
+.page-title { font-size: clamp(1.7rem, 3.4vw, 2.8rem); }
+.story-hero .page-title { font-size: clamp(2rem, 4.2vw, 3.4rem); }
+.band-title { font-size: clamp(1.4rem, 2.6vw, 2rem); }
+.contact-form h2, .chat-head h2 { font-size: clamp(1.3rem, 2vw, 1.6rem); }
+.promo-badge { font-size: 1.8rem; }
+.streak-count strong { font-size: 2.2rem; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; }
+  .deck-stage { width: min(100%, 340px); }
+}
+@media (max-width: 720px) {
+  .qd { grid-template-columns: 1fr; }
+}
+/* Diseña tu camisa: panel compacto */
+.builder-deck .deck { width: 100%; }
+.round-btn { width: 40px; height: 40px; }
+.round-btn.sm { width: 30px; height: 30px; }
+.round-btn svg { width: 16px; height: 16px; }
+.screens-window { padding: 6px 0 2px; }
+.screen-frame { gap: 4px; }
+.logo-btn { padding: 8px 12px; gap: 10px; font-size: 0.78rem; border-width: 1.5px; }
+.logo-btn strong { font-size: 0.88rem; }
+.logo-btn .lucide { width: 20px; height: 20px; }
+.seg-mini { border-width: 1.5px; }
+.seg-mini button { padding: 5px 10px; font-size: 0.8rem; }
+.size-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 5px; }
+.size-grid li { padding: 5px 6px; gap: 2px; border-width: 1.5px; }
+.size-name { font-size: 0.8rem; }
+.size-step button { width: 22px; height: 22px; }
+.size-step .lucide { width: 12px; height: 12px; }
+.size-qty { font-size: 0.85rem; }
+.qty-hint { font-size: 0.82rem; margin: 4px 0 0; }
+.add-row { gap: 12px; }
