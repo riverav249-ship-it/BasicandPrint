@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Check, Droplet, PenLine, Shirt as ShirtIcon, Truck } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Droplet, PenLine, Shirt as ShirtIcon, Truck } from "lucide-react";
 import HeroCarousel from "@/components/home/HeroCarousel";
 import QuickDesigner from "@/components/home/QuickDesigner";
 import { whatsappLink } from "@/lib/constants";
@@ -75,9 +75,13 @@ export default function Home() {
           </Link>
         </div>
         <HeroCarousel />
+        <a className="h-scroll" href="#disena-aqui">
+          Diseña aquí abajo
+          <ChevronDown aria-hidden="true" />
+        </a>
       </section>
 
-      <section className="h-make" aria-labelledby="h-unica">
+      <section className="h-make" aria-labelledby="h-unica" id="disena-aqui">
         <div className="h-make-copy">
           <p className="h-eyebrow dark">Diseña tu camisa en línea</p>
           <h2 id="h-unica">Hazla única</h2>
