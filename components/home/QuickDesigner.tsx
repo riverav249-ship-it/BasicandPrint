@@ -260,7 +260,7 @@ export default function QuickDesigner() {
         </button>
         {tool === "texto" && !text.trim() && <p className="qd-hint">Escribe tu frase para agregarla.</p>}
         <p className="qd-ship">
-          <Truck aria-hidden="true" /> Envío disponible a todo El Salvador
+          <Truck aria-hidden="true" /> Envío a todo El Salvador en pedidos de 10 camisetas o más
         </p>
         <Link href="/disenar" className="qd-more">
           Más opciones: espalda, varias tallas <ArrowRight aria-hidden="true" />

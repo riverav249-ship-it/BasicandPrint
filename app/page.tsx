@@ -8,7 +8,7 @@ const FEATURES = [
   { Icon: ShirtIcon, t: "Camisetas básicas de calidad" },
   { Icon: PenLine, t: "Diseña o sube tu propio diseño" },
   { Icon: Droplet, t: "Prueba con varios colores de camisa" },
-  { Icon: Truck, t: "Envíos a todo El Salvador" },
+  { Icon: Truck, t: "Envíos a todo el país desde 10 camisetas" },
 ];
 
 const CHECKS = [
