@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource-variable/archivo";
+import "@fontsource-variable/outfit";
+import "@fontsource/bowlby-one/latin-400.css";
 import "@fontsource/big-shoulders-display/latin-800";
 import "@fontsource/big-shoulders-display/latin-900";
 import "@fontsource/caveat/latin-600.css";

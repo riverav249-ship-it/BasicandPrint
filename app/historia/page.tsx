@@ -27,9 +27,9 @@ export default function Historia() {
           </p>
         </div>
         <div className="story-shirts" aria-hidden="true">
-          <Shirt color="#F2C230" design="torogoz" className="s1" />
-          <Shirt color="#1E2A4A" design="volcan" className="s2" />
-          <Shirt color="#C62A2F" design="maquilishuat" className="s3" />
+          <Shirt color="#F2C230" photo="/catalogo/camisetas/amarillo.webp" design="torogoz" className="s1" />
+          <Shirt color="#2B364A" photo="/catalogo/camisetas/marino.webp" design="volcan" className="s2" />
+          <Shirt color="#B91A26" photo="/catalogo/camisetas/rojo.webp" design="maquilishuat" className="s3" />
         </div>
       </header>
 

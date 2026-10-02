@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.3.0",
+    "@fontsource-variable/outfit": "^5.3.0",
     "@fontsource/big-shoulders-display": "^5.3.0",
     "@fontsource/bodoni-moda": "^5.3.0",
+    "@fontsource/bowlby-one": "^5.3.0",
     "@fontsource/caveat": "^5.3.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.2",

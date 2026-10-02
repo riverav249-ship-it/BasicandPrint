@@ -146,7 +146,7 @@ const tuDisenoAqui: Art = (i) => (
     <text x="40" y="76" fontFamily={FONT} fontSize="46" fontWeight="900" fill={i.base}>TU</text>
     <text x="34" y="122" fontFamily={FONT} fontSize="50" fontWeight="900" fill={i.base} letterSpacing="-1">DISEÑO</text>
     <text x="52" y="166" fontFamily={FONT} fontSize="50" fontWeight="900" fill={i.base}>AQUÍ</text>
-    <path d="M28 182 C 70 170, 120 168, 176 160" stroke="#22C3F0" strokeWidth="11" strokeLinecap="round" fill="none" />
+    <path d="M28 182 C 70 170, 120 168, 176 160" stroke="#F2643A" strokeWidth="11" strokeLinecap="round" fill="none" />
     <path d="M44 192 C 84 184, 124 182, 168 176" stroke={i.base} strokeWidth="4" strokeLinecap="round" fill="none" />
   </g>
 );
