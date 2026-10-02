@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, Check, ChevronDown, Droplet, PenLine, Shirt as ShirtIcon, Truck } from "lucide-react";
+import { ArrowRight, ChevronDown, Droplet, PenLine, Shirt as ShirtIcon, Truck } from "lucide-react";
 import HeroCarousel from "@/components/home/HeroCarousel";
-import QuickDesigner from "@/components/home/QuickDesigner";
 import { whatsappLink } from "@/lib/constants";
 
 const FEATURES = [
@@ -9,13 +8,6 @@ const FEATURES = [
   { Icon: PenLine, t: "Diseña o sube tu propio diseño" },
   { Icon: Droplet, t: "Prueba con varios colores de camisa" },
   { Icon: Truck, t: "Envíos a todo el país desde 10 camisetas" },
-];
-
-const CHECKS = [
-  "Sube tu propio diseño",
-  "Elige el color y la talla de tu camiseta",
-  "Añade texto, imágenes o logotipos",
-  "Mira el resultado antes de imprimir",
 ];
 
 /* Fotos de las tarjetas: provisionales, tomadas del diseño de referencia. Reemplazar por fotos reales del taller y clientes. */
@@ -75,36 +67,13 @@ export default function Home() {
           </Link>
         </div>
         <HeroCarousel />
-        <a className="h-scroll" href="#disena-aqui">
-          Diseña aquí abajo
+        <a className="h-scroll" href="#servicios">
+          Lo que hacemos
           <ChevronDown aria-hidden="true" />
         </a>
       </section>
 
-      <section className="h-make" aria-labelledby="h-unica" id="disena-aqui">
-        <div className="h-make-copy">
-          <p className="h-eyebrow dark">Diseña tu camisa en línea</p>
-          <h2 id="h-unica">Hazla única</h2>
-          <p>
-            Personaliza tu camiseta aquí mismo: sube tu imagen, escribe tu frase o elige un diseño, cambia el color y mira el
-            resultado al instante.
-          </p>
-          <ul className="h-checks">
-            {CHECKS.map((c) => (
-              <li key={c}>
-                <Check aria-hidden="true" />
-                {c}
-              </li>
-            ))}
-          </ul>
-          <Link className="h-cta-outline" href="/disenar">
-            Comienza a diseñar <ArrowRight aria-hidden="true" />
-          </Link>
-        </div>
-        <QuickDesigner />
-      </section>
-
-      <section className="h-cats" aria-label="Lo que hacemos">
+      <section className="h-cats" aria-label="Lo que hacemos" id="servicios">
         {CATS.map(({ t, d, href, Art, external }) => (
           <Link
             key={t}
